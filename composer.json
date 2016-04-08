@@ -1,0 +1,22 @@
+{
+    "name" : "sonntagnacht/toolbox-bundle",
+    "description" : "SNToolboxBundle",
+    "type" : "symfony-bundle",
+    "authors" : [{
+        "name" : "Team Internet",
+        "email" : "dev@sonntagnacht.de"
+    }],
+    "license" : [
+        "MIT"
+    ],
+    "require" : {
+    },
+    "autoload" : {
+        "psr-0" : {
+            "SN\\ToolboxBundle" : ""
+        }
+    },
+    "target-dir" : "Sonntagnacht/ToolboxBundle",
+    "repositories" : [{
+    }]
+}
