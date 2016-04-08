@@ -11,10 +11,8 @@
     ],
     "require" : {
     },
-    "autoload" : {
-        "psr-0" : {
-            "SN\\ToolboxBundle" : ""
-        }
+     "autoload": {
+        "psr-4": { "SN\\ToolboxBundle\\": "" }
     },
     "target-dir" : "Sonntagnacht/ToolboxBundle",
     "repositories" : [{
