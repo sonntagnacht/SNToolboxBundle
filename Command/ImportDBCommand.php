@@ -45,25 +45,25 @@ class ImportDBCommand extends ContainerAwareCommand
         $fileInfo = new \SplFileInfo($filename);
         if ($fileInfo->getExtension() == 'gz') {
             CommandHelper::executeCommand(
-                $output,
                 sprintf('gunzip < %s | mysql -h%s -u%s -p%s %s',
                     $filename,
                     $this->getContainer()->getParameter('database_host'),
                     $this->getContainer()->getParameter('database_user'),
                     $this->getContainer()->getParameter('database_password'),
                     $this->getContainer()->getParameter('database_name')
-                )
+                ),
+                $output
             );
         } else {
             CommandHelper::executeCommand(
-                $output,
                 sprintf('mysql -h%s -u%s -p%s %s',
                     $filename,
                     $this->getContainer()->getParameter('database_host'),
                     $this->getContainer()->getParameter('database_user'),
                     $this->getContainer()->getParameter('database_password'),
                     $this->getContainer()->getParameter('database_name')
-                )
+                ),
+                $output
             );
         }
 
