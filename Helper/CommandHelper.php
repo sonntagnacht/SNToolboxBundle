@@ -1,6 +1,5 @@
 <?php
 /**
- * TenFour CMS
  * Created by PhpStorm.
  * File: CommandHelper.php
  * User: Conrad
