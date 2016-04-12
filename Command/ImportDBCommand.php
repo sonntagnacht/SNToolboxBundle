@@ -7,9 +7,7 @@
  * Date: 03.07.2015
  * Time: 11:04
  */
-
 namespace UO\Bundle\UtilityBundle\Command;
-
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,7 +18,6 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use SN\ToolboxBundle\Helper\CommandHelper;
-use Symfony\Component\Finder\Finder;
 
 class ImportDBCommand extends ContainerAwareCommand
 {
