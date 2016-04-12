@@ -1,6 +1,5 @@
 <?php
 /**
- * umwelt-online-website
  * Created by PhpStorm.
  * File: DateHelper.php
  * User: con
