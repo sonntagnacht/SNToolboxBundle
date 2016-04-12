@@ -21,18 +21,21 @@ class DateHelper
      */
     public static function convertStringToDate($dateStr)
     {
-        if(is_null($dateStr)) {
+        if (is_null($dateStr)) {
             return null;
         }
         if (is_string($dateStr)) {
-            $timestamp      = strtotime($dateStr);
-            $date = new \DateTime();
+            $timestamp = strtotime($dateStr);
+            $date      = new \DateTime();
             $date->setTimestamp($timestamp);
+
             return $date;
-        }else if($dateStr instanceof \DateTime){
-            return $dateStr;
-        }else{
-            throw new \InvalidArgumentException(sprintf('String or DateTime required'));
+        } else {
+            if ($dateStr instanceof \DateTime) {
+                return $dateStr;
+            } else {
+                throw new \InvalidArgumentException(sprintf('String or DateTime required'));
+            }
         }
     }
 
