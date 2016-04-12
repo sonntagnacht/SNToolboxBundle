@@ -273,6 +273,7 @@ class CommandHelper
 
         $remoteParam   = $remote['parameters'];
         $localParam    = $local['parameters'];
+        
         $missingLocal  = array();
         $missingRemote = array();
         $remoteTypes   = array();
