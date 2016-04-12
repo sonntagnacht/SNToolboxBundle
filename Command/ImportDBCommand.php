@@ -7,7 +7,7 @@
  * Date: 03.07.2015
  * Time: 11:04
  */
-namespace UO\Bundle\UtilityBundle\Command;
+namespace SN\ToolboxBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
