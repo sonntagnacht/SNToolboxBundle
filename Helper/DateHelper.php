@@ -22,7 +22,7 @@ class DateHelper
     public static function convertStringToDate($dateStr)
     {
         if(is_null($dateStr)) {
-            return;
+            return null;
         }
         if (is_string($dateStr)) {
             $timestamp      = strtotime($dateStr);
