@@ -54,7 +54,7 @@ class ImportDBCommand extends ContainerAwareCommand
                 ),
                 $output
             );
-        } else {
+        } elseif ($fileInfo->getExtension() == 'sql') {
             CommandHelper::executeCommand(
                 sprintf('mysql -h%s -u%s -p%s %s',
                     $filename,
@@ -65,6 +65,8 @@ class ImportDBCommand extends ContainerAwareCommand
                 ),
                 $output
             );
+        } else {
+            $output->writeln(sprintf('Unknown extension <comment>%s</comment>', $fileInfo->getExtension()));
         }
 
     }
