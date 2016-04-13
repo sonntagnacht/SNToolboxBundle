@@ -13,7 +13,6 @@ namespace SN\ToolboxBundle\Helper;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Process\Process;
 use UO\Bundle\UtilityBundle\Exception\MissingParameterException;
@@ -90,8 +89,6 @@ class CommandHelper
         $output->write(sprintf($style, $border['bottom-right']));
         $output->writeln('');
     }
-
-    // todo add sub headline :D
 
     /**
      * clears the last line after a countdown
@@ -280,7 +277,7 @@ class CommandHelper
         $localTypes    = array();
 
         foreach ($remoteParam as $key => $value) {
-            if (array_key_exists($key, $localParam) == false) {
+            if (array_key_exists($key, $localParam) === false) {
                 $missingLocal[$key] = $value;
             } else {
                 $remoteTypes[$key] = array(
@@ -291,7 +288,7 @@ class CommandHelper
         }
 
         foreach ($localParam as $key => $value) {
-            if (array_key_exists($key, $remoteParam) == false) {
+            if (array_key_exists($key, $remoteParam) === false) {
                 $missingRemote[$key] = $value;
             } else {
                 $localTypes[$key] = array(
