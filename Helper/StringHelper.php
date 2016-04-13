@@ -6,7 +6,7 @@
  * Time: 14:19
  */
 
-namespace SN\ToolboxBundle\Helper\Helper;
+namespace SN\ToolboxBundle\Helper;
 
 use Behat\Transliterator\Transliterator;
 
