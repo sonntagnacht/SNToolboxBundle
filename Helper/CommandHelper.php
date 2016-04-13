@@ -143,7 +143,7 @@ class CommandHelper
                 $output->write("\x0D");
                 $output->write(sprintf('%s Seconds', $seconds));
                 $seconds--;
-                sleep(1);
+                usleep(1000000);
             }
             self::clearLineAfterCountdown($output);
         }
@@ -241,7 +241,7 @@ class CommandHelper
         );
         while ($process->isRunning()) {
             $process->checkTimeout();
-            usleep(100);
+            usleep(1000);
         }
 
         return trim($process->getOutput());
