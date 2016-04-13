@@ -10,8 +10,6 @@
 
 namespace SN\ToolboxBundle\Gaufrette\Model;
 
-use Symfony\Component\HttpFoundation\File\File;
-
 /**
  * Interface GaufretteFileInterface
  *
