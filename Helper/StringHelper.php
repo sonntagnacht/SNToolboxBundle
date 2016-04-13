@@ -275,7 +275,7 @@ class StringHelper extends Transliterator
      */
     public static function urlHasAnchor($url)
     {
-        return is_string($url) && strstr($url, '#') != false;
+        return is_string($url) && strstr($url, '#') !== false;
     }
 
     /**
