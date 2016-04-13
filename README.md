@@ -7,4 +7,5 @@
                                                                                
 ```
 ## Collection of tools for Symfony 2.7+
-[![SensioLabs Insight](https://img.shields.io/sensiolabs/i/cfc8a6a7-c79e-47c6-8ba3-ca06ab51bd7f.svg?maxAge=2592000?style=flat-square)](https://insight.sensiolabs.com/projects/cfc8a6a7-c79e-47c6-8ba3-ca06ab51bd7f)
+
+[![SensioLabs Insight](https://img.shields.io/sensiolabs/i/cfc8a6a7-c79e-47c6-8ba3-ca06ab51bd7f.svg?style=flat-square)](https://insight.sensiolabs.com/projects/cfc8a6a7-c79e-47c6-8ba3-ca06ab51bd7f)
