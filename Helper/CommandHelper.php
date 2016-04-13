@@ -15,8 +15,8 @@ use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Process\Process;
-use UO\Bundle\UtilityBundle\Exception\MissingParameterException;
-use UO\Bundle\UtilityBundle\Helper\StringHelper;
+use SN\ToolboxBundle\Exception\MissingParameterException;
+use SN\ToolboxBundle\Helper\Helper\StringHelper;
 
 class CommandHelper
 {
