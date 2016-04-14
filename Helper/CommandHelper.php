@@ -13,7 +13,6 @@ namespace SN\ToolboxBundle\Helper;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Process\Process;
 use SN\ToolboxBundle\Exception\MissingParameterException;
 
