@@ -215,25 +215,6 @@ class CommandHelper
 
     /**
      * @param String $command
-     * @param ContainerInterface $container
-     * @param OutputInterface $output
-     * @return string
-     */
-    public static function executeRemoteCommand($command, ContainerInterface $container, OutputInterface $output)
-    {
-        $cmd = sprintf(
-            'ssh %s@%s "cd %s; %s"',
-            $container->getParameter("production_ssh_user"),
-            $container->getParameter("production_ssh_ip"),
-            $container->getParameter("production_webroot"),
-            $command
-        );
-
-        return self::executeCommand($cmd, $output);
-    }
-
-    /**
-     * @param String $command
      * @param OutputInterface $output
      * @param boolean $write
      * @return string
