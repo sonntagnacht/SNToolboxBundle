@@ -16,7 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Process\Process;
 use SN\ToolboxBundle\Exception\MissingParameterException;
-use SN\ToolboxBundle\Helper\Helper\StringHelper;
 
 class CommandHelper
 {
@@ -41,8 +40,7 @@ class CommandHelper
         $title,
         $style = '<fg=white>%s</fg=white>',
         $fancyBorder = null
-    )
-    {
+    ) {
         self::$headlineCounter++;
 
         // give the title some extra whitespace and the counter..
@@ -66,7 +64,7 @@ class CommandHelper
                 'bottom-right' => '╝',
                 'left'         => '║',
                 'right'        => '║',
-                'horizontal'   => '═'
+                'horizontal'   => '═',
             ];
         } else {
             $border = [
@@ -76,14 +74,14 @@ class CommandHelper
                 'bottom-right' => '+',
                 'left'         => '|',
                 'right'        => '|',
-                'horizontal'   => '-'
+                'horizontal'   => '-',
             ];
         }
         $output->write(sprintf($style, $border['top-left']));
         $writeChar($border['horizontal'], strlen($title));
         $output->write(sprintf($style, $border['top-right']));
         $output->writeln('');
-        $output->writeln(sprintf($style, sprintf($border['left'] . '%s' . $border['right'], $title)));
+        $output->writeln(sprintf($style, sprintf($border['left'].'%s'.$border['right'], $title)));
         $output->write(sprintf($style, $border['bottom-left']));
         $writeChar($border['horizontal'], strlen($title));
         $output->write(sprintf($style, $border['bottom-right']));
@@ -188,14 +186,29 @@ class CommandHelper
 
         foreach ($e->getTrace() as $key => $trace) {
             $output->writeln($key);
-            $output->writeln(sprintf('  File:     %s', @$trace['file']));
-            $output->writeln(sprintf('  Line:     %s', @$trace['line']));
-            $output->writeln(sprintf('  Function: %s', @$trace['function']));
-            $output->writeln(sprintf('  Class:    %s', @$trace['class']));
-            $output->writeln(sprintf('  Type:     %s', @$trace['type']));
-            $output->writeln(
-                sprintf('  args:     %s', implode(', ', StringHelper::transformToArrayString((array)@$trace['args'])))
-            );
+            if (array_key_exists('file', $trace)) {
+                $output->writeln(sprintf('  File:     %s', (string)$trace['file']));
+            }
+            if (array_key_exists('line', $trace)) {
+                $output->writeln(sprintf('  Line:     %s', (string)$trace['line']));
+            }
+            if (array_key_exists('function', $trace)) {
+                $output->writeln(sprintf('  Function: %s', (string)$trace['function']));
+            }
+            if (array_key_exists('class', $trace)) {
+                $output->writeln(sprintf('  Class:    %s', (string)$trace['class']));
+            }
+            if (array_key_exists('type', $trace)) {
+                $output->writeln(sprintf('  Type:     %s', (string)$trace['type']));
+            }
+            if (array_key_exists('args', $trace)) {
+                $output->writeln(
+                    sprintf(
+                        '  args:     %s',
+                        implode(', ', StringHelper::transformToArrayString((array)$trace['args']))
+                    )
+                );
+            }
             $output->writeln('');
         }
     }
@@ -255,12 +268,13 @@ class CommandHelper
      * @param string $titleLocal
      * @throws MissingParameterException
      */
-    public static function compareParametersYml(OutputInterface $output,
-                                                array $remote,
-                                                array $local,
-                                                $titleRemote = 'Remote',
-                                                $titleLocal = 'Local')
-    {
+    public static function compareParametersYml(
+        OutputInterface $output,
+        array $remote,
+        array $local,
+        $titleRemote = 'Remote',
+        $titleLocal = 'Local'
+    ) {
         if (!isset($remote['parameters']) || !is_array($remote['parameters'])) {
             throw new \InvalidArgumentException(sprintf('Remote Array needs to have a [parameters] array'));
         }
@@ -268,9 +282,9 @@ class CommandHelper
             throw new \InvalidArgumentException(sprintf('Remote Array needs to have a [parameters] array'));
         }
 
-        $remoteParam   = $remote['parameters'];
-        $localParam    = $local['parameters'];
-        
+        $remoteParam = $remote['parameters'];
+        $localParam  = $local['parameters'];
+
         $missingLocal  = array();
         $missingRemote = array();
         $remoteTypes   = array();
@@ -282,7 +296,7 @@ class CommandHelper
             } else {
                 $remoteTypes[$key] = array(
                     'value' => $value,
-                    'type'  => gettype($value)
+                    'type'  => gettype($value),
                 );
             }
         }
@@ -293,19 +307,21 @@ class CommandHelper
             } else {
                 $localTypes[$key] = array(
                     'value' => $value,
-                    'type'  => gettype($value)
+                    'type'  => gettype($value),
                 );
             }
         }
 
         $typeTable = new Table($output);
-        $typeTable->setHeaders(array(
-            'Param',
-            sprintf('Type [%s]', $titleRemote),
-            sprintf('Value [%s]', $titleRemote),
-            sprintf('Type [%s]', $titleLocal),
-            sprintf('Value [%s]', $titleLocal)
-        ));
+        $typeTable->setHeaders(
+            array(
+                'Param',
+                sprintf('Type [%s]', $titleRemote),
+                sprintf('Value [%s]', $titleRemote),
+                sprintf('Type [%s]', $titleLocal),
+                sprintf('Value [%s]', $titleLocal),
+            )
+        );
         $typeTableHasRows = false;
         foreach ($remoteTypes as $key => $value) {
             if (array_key_exists($key, $localTypes) && $value['type'] !== $localTypes[$key]['type']) {
@@ -316,7 +332,7 @@ class CommandHelper
                         $value['type'],
                         $value['value'],
                         $localTypes[$key]['type'],
-                        $localTypes[$key]['value']
+                        $localTypes[$key]['value'],
                     )
                 );
             }
