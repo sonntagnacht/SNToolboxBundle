@@ -25,7 +25,7 @@ trait SecurityAclProviderTrait
      */
     public function getAclProvider()
     {
-        if ($this->aclProvider == null) {
+        if (null === $this->aclProvider) {
             if (isset($this->container) && $this->container instanceof ContainerInterface) {
                 $this->aclProvider = $this->container->get('security.acl.provider');
             } elseif ($this instanceof ContainerAwareCommand) {
