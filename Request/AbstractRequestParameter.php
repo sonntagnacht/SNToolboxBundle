@@ -418,11 +418,12 @@ abstract class AbstractRequestParameter
      * 2015-10-26T07:46:36.611Z
      *
      * @param $str
+     * @param string $format
      * @return \DateTime
      */
-    public static function normalizeDateTimeString($str)
+    public static function normalizeDateTimeString($str, $format = null)
     {
-        return new \DateTime($str);
+        return new $format == null ? \DateTime($str) : \DateTime::createFromFormat($format, $str);
     }
 
     /**
