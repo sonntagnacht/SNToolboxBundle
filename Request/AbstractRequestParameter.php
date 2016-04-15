@@ -356,7 +356,7 @@ abstract class AbstractRequestParameter
     public static function validMongoIds(array $value)
     {
         foreach ($value as $val) {
-            if (self::validMongoId($val) == false) {
+            if (self::validMongoId($val) === false) {
                 return false;
             }
         }
@@ -423,7 +423,7 @@ abstract class AbstractRequestParameter
      */
     public static function normalizeDateTimeString($str, $format = null)
     {
-        return new $format == null ? \DateTime($str) : \DateTime::createFromFormat($format, $str);
+        return new $format === null ? \DateTime($str) : \DateTime::createFromFormat($format, $str);
     }
 
     /**
@@ -434,7 +434,7 @@ abstract class AbstractRequestParameter
      */
     public static function validateDateTimeString($str)
     {
-        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$/', $str, $parts) == true) {
+        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$/', $str, $parts) === true) {
             $time = gmmktime($parts[4], $parts[5], $parts[6], $parts[2], $parts[3], $parts[1]);
 
             $input_time = strtotime($str);
