@@ -9,6 +9,9 @@
  */
 namespace SN\ToolboxBundle\Security;
 
+use Symfony\Component\Security\Acl\Dbal\AclProvider;
+use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
+
 /**
  * Trait SecurityAclProviderTrait
  */
