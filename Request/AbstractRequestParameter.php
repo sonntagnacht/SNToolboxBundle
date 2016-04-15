@@ -12,9 +12,8 @@ namespace SN\ToolboxBundle\Request;
 
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use SN\ToolboxBundle\Helper\StringHelper;
 
 /**
@@ -177,7 +176,7 @@ abstract class AbstractRequestParameter
     {
         $unique = array();
         $value  = self::stringToArray($value);
-        if (count($value) == 0 && $allowEmpty == false) {
+        if (count($value) == 0 && $allowEmpty === false) {
             return false;
         }
         foreach ($value as $id) {
@@ -424,8 +423,6 @@ abstract class AbstractRequestParameter
     public static function normalizeDateTimeString($str)
     {
         return new \DateTime($str);
-//        return \DateTime::createFromFormat(self::DATE_ISO8601, $str);
-//        return \DateTime::createFromFormat(DATE_ISO8601, $str);
     }
 
     /**
