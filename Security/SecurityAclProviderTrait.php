@@ -7,6 +7,7 @@
  * Date: 15.04.16
  * Time: 13:51
  */
+namespace SN\ToolboxBundle\Security;
 
 /**
  * Trait SecurityAclProviderTrait
