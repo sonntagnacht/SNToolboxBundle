@@ -21,7 +21,7 @@ trait SecurityAclProviderTrait
     protected $aclProvider;
 
     /**
-     * @return MutableAclProvider|AclProvider
+     * @return Symfony\Component\Security\Acl\Dbal\MutableAclProvider|Symfony\Component\Security\Acl\Dbal\AclProvider
      */
     public function getAclProvider()
     {
