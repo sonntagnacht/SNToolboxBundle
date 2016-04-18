@@ -124,7 +124,7 @@ class AclHelper
      *     $manager->revoke($myDomainObject, 'delete'); // Remove "delete" permission for the $myDomainObject
      * </pre>
      *
-     * @param Object $entity The DomainObject that we are revoking the permission for
+     * @param mixed $entity The DomainObject that we are revoking the permission for
      * @param int|string $mask The mask to revoke
      * @param UserInterface $user (optional) the user who should be applied to
      *
