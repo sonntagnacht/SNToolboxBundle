@@ -1,19 +1,27 @@
 {
-    "name" : "sonntagnacht/toolbox-bundle",
-    "description" : "SNToolboxBundle",
-    "type" : "symfony-bundle",
-    "authors" : [{
-        "name" : "Team Internet",
-        "email" : "dev@sonntagnacht.de"
-    }],
-    "license" : [
-        "MIT"
-    ],
-    "require" : {
-    },
-     "autoload": {
-        "psr-4": { "SN\\ToolboxBundle\\": "" }
-    },
-    "repositories" : [{
-    }]
+  "name": "sonntagnacht/toolbox-bundle",
+  "description": "collection of Tools for symfony 2.8+",
+  "type": "symfony-bundle",
+  "authors": [
+    {
+      "name": "Team Internet",
+      "email": "dev@sonntagnacht.de"
+    }
+  ],
+  "license": [
+    "MIT"
+  ],
+  "require": {
+    "php": ">=5.5",
+    "symfony/framework-bundle": ">=2.8"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "3.7.*"
+  },
+  "autoload": {
+    "psr-0": {
+      "SN\\ToolboxBundle": ""
+    }
+  },
+  "target-dir": "sonntagnacht/toolbox-bundle"
 }
