@@ -37,11 +37,12 @@ namespace SN\ToolboxBundle\Security;
 use Symfony\Component\Security\Acl\Domain\Entry;
 use Symfony\Component\Security\Acl\Domain\Acl;
 use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
+use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -57,8 +58,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class AclHelper
 {
 
+    /**
+     * @var AclProviderInterface
+     */
     protected $provider;
 
+    /**
+     * @var SecurityContextInterface
+     */
     protected $context;
 
     /**
@@ -181,4 +188,36 @@ class AclHelper
 
         return $this;
     }
+
+    /**
+     * @param int|string $mask
+     * @param mixed $object
+     * @param UserInterface $user
+     * @return bool
+     */
+    public function isGranted($mask, $object, UserInterface $user)
+    {
+        $objectIdentity   = ObjectIdentity::fromDomainObject($object);
+        $securityIdentity = UserSecurityIdentity::fromAccount($user);
+
+        try {
+            $acl = $this->provider->findAcl($objectIdentity, array($securityIdentity));
+        } catch (AclNotFoundException $e) {
+            return false;
+        }
+
+        if (!is_int($mask)) {
+            $builder = new MaskBuilder;
+            $builder->add($mask);
+
+            $mask = $builder->get();
+        }
+
+        try {
+            return $acl->isGranted(array($mask), array($securityIdentity), false);
+        } catch (NoAceFoundException $e) {
+            return false;
+        }
+    }
+
 }
