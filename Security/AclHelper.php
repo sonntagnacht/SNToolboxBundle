@@ -76,9 +76,9 @@ class AclHelper
     /**
      * Grant a permission
      *
-     * @param Object $entity The DomainObject to add the permissions for
+     * @param mixed $entity The DomainObject to add the permissions for
      * @param integer|string $mask The initial mask
-     * @param Object $user (optional) the user who should be applied to
+     * @param UserInterface $user (optional) the user who should be applied to
      * @return Object The original Entity
      */
     public function grant($entity, $mask = MaskBuilder::MASK_OWNER, $user = null)
