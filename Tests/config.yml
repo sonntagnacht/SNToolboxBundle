@@ -32,7 +32,7 @@ security:
 
 parameters:
     request_listener.http_port:
-    request_listener.https_port: 
+    request_listener.https_port:
 
 doctrine:
     dbal:

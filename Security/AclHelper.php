@@ -41,7 +41,6 @@ use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
