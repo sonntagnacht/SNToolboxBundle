@@ -36,8 +36,6 @@ namespace SN\ToolboxBundle\Security;
 
 use Symfony\Component\Security\Acl\Domain\Entry;
 use Symfony\Component\Security\Acl\Domain\Acl;
-use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
-use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -161,7 +159,7 @@ class AclHelper
      *
      * @param Acl $acl The ACL to update
      * @param Entry $ace The ACE to remove the mask from
-     * @param unknown_type $mask The mask to remove
+     * @param mixed $mask The mask to remove
      *
      * @return \ApplicationBundle\Security\Manager Reference to $this for fluent interface
      */
@@ -177,7 +175,7 @@ class AclHelper
      *
      * @param SecurityIdentityInterface $securityIdentity The ACE to add
      * @param integer|string $mask The initial mask to set
-     * @param ACL $acl The ACL to update
+     * @param mixed $acl The ACL to update
      *
      * @return \ApplicationBundle\Security\Manager Reference to $this for fluent interface
      */
@@ -202,7 +200,7 @@ class AclHelper
 
         try {
             $acl = $this->provider->findAcl($objectIdentity, array($securityIdentity));
-        } catch (AclNotFoundException $e) {
+        } catch (Symfony\Component\Security\Acl\Exception\NoAceFoundException $e) {
             return false;
         }
 

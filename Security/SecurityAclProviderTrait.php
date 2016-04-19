@@ -21,14 +21,14 @@ trait SecurityAclProviderTrait
     protected $aclProvider;
 
     /**
-     * @returnSymfony\Component\Security\Acl\Dbal\MutableAclProvider;|AclProvider
+     * @return Symfony\Component\Security\Acl\Dbal\MutableAclProvider|Symfony\Component\Security\Acl\Dbal\AclProvider
      */
     public function getAclProvider()
     {
         if (null === $this->aclProvider) {
-            if (isset($this->container) && $this->container instanceof ContainerInterface) {
+            if (isset($this->container) && $this->container instanceof Symfony\Component\DependencyInjection\ContainerInterface) {
                 $this->aclProvider = $this->container->get('security.acl.provider');
-            } elseif ($this instanceof ContainerAwareCommand) {
+            } elseif ($this instanceof Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand) {
                 $this->aclProvider = $this->getContainer()->get('security.acl.provider');
             }
         }
