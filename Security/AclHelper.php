@@ -36,10 +36,15 @@ namespace SN\ToolboxBundle\Security;
 
 use Symfony\Component\Security\Acl\Domain\Entry;
 use Symfony\Component\Security\Acl\Domain\Acl;
+use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
+use Symfony\Component\Security\Acl\Model\AclInterface;
+use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -62,20 +67,20 @@ class AclHelper
     protected $provider;
 
     /**
-     * @var AuthorizationCheckerInterface
+     * @var TokenStorage
      */
-    protected $context;
+    protected $tokenStorage;
 
     /**
      * Constructor
      *
      * @param AclProviderInterface $provider
-     * @param AuthorizationCheckerInterface $context
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(AclProviderInterface $provider, AuthorizationCheckerInterface $context)
+    public function __construct(AclProviderInterface $provider, TokenStorageInterface $tokenStorage)
     {
-        $this->provider = $provider;
-        $this->context  = $context;
+        $this->provider     = $provider;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -91,8 +96,8 @@ class AclHelper
         $acl = $this->getAcl($entity);
 
         // retrieving the security identity of the currently logged-in user
-        $securityContext  = $this->context;
-        $user             = $user instanceof UserInterface ? $user : $securityContext->getToken()->getUser();
+        $tokenStorage  = $this->tokenStorage;
+        $user             = $user instanceof UserInterface ? $user : $tokenStorage->getToken()->getUser();
         $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
         // grant owner access
@@ -140,7 +145,7 @@ class AclHelper
         $acl  = $this->getAcl($entity);
         $aces = $acl->getObjectAces();
 
-        $user             = $user instanceof UserInterface ? $user : $this->context->getToken()->getUser();
+        $user             = $user instanceof UserInterface ? $user : $this->tokenStorage->getToken()->getUser();
         $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
         foreach ($aces as $i => $ace) {
@@ -154,14 +159,15 @@ class AclHelper
         return $this;
     }
 
+
     /**
      * Remove a mask
      *
-     * @param Acl $acl The ACL to update
-     * @param Entry $ace The ACE to remove the mask from
-     * @param mixed $mask The mask to remove
-     *
-     * @return \ApplicationBundle\Security\Manager Reference to $this for fluent interface
+     * @param $index
+     * @param Acl $acl
+     * @param Entry $ace
+     * @param $mask
+     * @return $this
      */
     protected function revokeMask($index, Acl $acl, Entry $ace, $mask)
     {
@@ -171,15 +177,14 @@ class AclHelper
     }
 
     /**
-     * Add a mask
+     * add a mask
      *
-     * @param SecurityIdentityInterface $securityIdentity The ACE to add
-     * @param integer|string $mask The initial mask to set
-     * @param mixed $acl The ACL to update
-     *
-     * @return \ApplicationBundle\Security\Manager Reference to $this for fluent interface
+     * @param $securityIdentity
+     * @param $mask
+     * @param $acl
+     * @return $this
      */
-    protected function addMask($securityIdentity, $mask, $acl)
+    protected function addMask($securityIdentity, $mask, Acl $acl)
     {
         $acl->insertObjectAce($securityIdentity, $mask);
         $this->provider->updateAcl($acl);
@@ -200,7 +205,7 @@ class AclHelper
 
         try {
             $acl = $this->provider->findAcl($objectIdentity, array($securityIdentity));
-        } catch (Symfony\Component\Security\Acl\Exception\NoAceFoundException $e) {
+        } catch (NoAceFoundException $e) {
             return false;
         }
 

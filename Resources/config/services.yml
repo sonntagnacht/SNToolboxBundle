@@ -1,4 +1,4 @@
 services:
     sn.toolbox.acl.helper:
         class: SN\ToolboxBundle\Security\AclHelper
-        arguments: ["@security.acl.dbal.provider", "@security.authorization_checker"]
+        arguments: ["@security.acl.dbal.provider", "@security.token_storage"]
