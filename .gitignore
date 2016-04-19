@@ -2,3 +2,4 @@
 /vendor
 /composer.lock
 Tests/cache
+Tests/coverag
