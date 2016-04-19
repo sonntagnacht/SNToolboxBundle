@@ -7,6 +7,6 @@
                                                                                
 ```
 ## collection of tools for symfony 2.7+
-
+[![Travis](https://img.shields.io/travis/sonntagnacht/SNToolBoxBundle.svg?style=flat-square)](https://travis-ci.org/sonntagnacht/SNToolBoxBundle)
 [![SensioLabs Insight](https://img.shields.io/sensiolabs/i/cfc8a6a7-c79e-47c6-8ba3-ca06ab51bd7f.svg?style=flat-square)](https://insight.sensiolabs.com/projects/cfc8a6a7-c79e-47c6-8ba3-ca06ab51bd7f)
-[![Coverage Status](https://coveralls.io/repos/github/sonntagnacht/SNToolBoxBundle/badge.svg?branch=master)](https://coveralls.io/github/sonntagnacht/SNToolBoxBundle?branch=master)
+[![Coveralls](https://img.shields.io/coveralls/sonntagnacht/SNToolBoxBundle.svg?style=flat-square)](https://coveralls.io/r/sonntagnacht/SNToolBoxBundle?branch=master)
