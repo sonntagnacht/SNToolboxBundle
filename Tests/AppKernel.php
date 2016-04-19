@@ -5,20 +5,22 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 
 class AppKernel extends Kernel
 {
-public function registerBundles()
-{
-$bundles = array();
+    public function registerBundles()
+    {
+        $bundles = array();
 
-if (in_array($this->getEnvironment(), array('test'))) {
-$bundles[] = new Symfony\Bundle\FrameworkBundle\FrameworkBundle();
-$bundles[] = new SN\ToolboxBundle\SNToolboxBundle();
-}
+        if (in_array($this->getEnvironment(), array('test'))) {
+            $bundles[] = new Symfony\Bundle\FrameworkBundle\FrameworkBundle();
+            $bundles[] = new Symfony\Bundle\SecurityBundle\SecurityBundle();
+            $bundles[] = new Doctrine\Bundle\DoctrineBundle\DoctrineBundle();
+            $bundles[] = new SN\ToolboxBundle\SNToolboxBundle();
+        }
 
-return $bundles;
-}
+        return $bundles;
+    }
 
-public function registerContainerConfiguration(LoaderInterface $loader)
-{
-$loader->load(__DIR__.'/config.yml');
-}
+    public function registerContainerConfiguration(LoaderInterface $loader)
+    {
+        $loader->load(__DIR__.'/config.yml');
+    }
 }

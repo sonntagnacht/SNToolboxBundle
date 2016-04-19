@@ -40,6 +40,7 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -62,7 +63,7 @@ class AclHelper
     protected $provider;
 
     /**
-     * @var SecurityContextInterface
+     * @var AuthorizationCheckerInterface
      */
     protected $context;
 
@@ -70,9 +71,9 @@ class AclHelper
      * Constructor
      *
      * @param AclProviderInterface $provider
-     * @param SecurityContextInterface $context
+     * @param AuthorizationCheckerInterface $context
      */
-    public function __construct(AclProviderInterface $provider, SecurityContextInterface $context)
+    public function __construct(AclProviderInterface $provider, AuthorizationCheckerInterface $context)
     {
         $this->provider = $provider;
         $this->context  = $context;
@@ -122,6 +123,7 @@ class AclHelper
         return $acl;
     }
 
+
     /**
      * Revoke a permission
      *
@@ -129,11 +131,10 @@ class AclHelper
      *     $manager->revoke($myDomainObject, 'delete'); // Remove "delete" permission for the $myDomainObject
      * </pre>
      *
-     * @param mixed $entity The DomainObject that we are revoking the permission for
-     * @param int|string $mask The mask to revoke
-     * @param UserInterface $user (optional) the user who should be applied to
-     *
-     * @return \ApplicationBundle\Security\Manager Reference to $this for fluent interface
+     * @param $entity
+     * @param int $mask
+     * @param null $user
+     * @return $this
      */
     public function revoke($entity, $mask = MaskBuilder::MASK_OWNER, $user = null)
     {
