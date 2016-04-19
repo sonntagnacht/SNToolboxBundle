@@ -37,7 +37,8 @@ namespace SN\ToolboxBundle\Security;
 use Symfony\Component\Security\Acl\Domain\Entry;
 use Symfony\Component\Security\Acl\Domain\Acl;
 use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
-use Symfony\Component\Security\Acl\Model\AclInterface;
+use Symfony\Component\Security\Acl\Model\MutableAclInterface;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
@@ -45,7 +46,6 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -62,7 +62,7 @@ class AclHelper
 {
 
     /**
-     * @var AclProviderInterface
+     * @var MutableAclProviderInterface
      */
     protected $provider;
 
@@ -148,6 +148,9 @@ class AclHelper
         $user             = $user instanceof UserInterface ? $user : $this->tokenStorage->getToken()->getUser();
         $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
+        /**
+         * @var Entry $ace
+         */
         foreach ($aces as $i => $ace) {
             if ($securityIdentity->equals($ace->getSecurityIdentity())) {
                 $this->revokeMask($i, $acl, $ace, $mask);
@@ -184,7 +187,7 @@ class AclHelper
      * @param $acl
      * @return $this
      */
-    protected function addMask($securityIdentity, $mask, Acl $acl)
+    protected function addMask(SecurityIdentityInterface $securityIdentity, $mask, MutableAclInterface $acl)
     {
         $acl->insertObjectAce($securityIdentity, $mask);
         $this->provider->updateAcl($acl);
