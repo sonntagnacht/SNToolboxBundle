@@ -20,6 +20,9 @@ class DateHelperTest extends BaseTestCase
 
         $this->assertNull(DateHelper::convertStringToDate(null));
 
+        $dateTime = new \DateTime("today");
+        $this->assertTrue(DateHelper::convertStringToDate($dateTime) instanceof \DateTime);
+
         try {
             DateHelper::convertStringToDate(123);
         } catch (\Exception $e) {
