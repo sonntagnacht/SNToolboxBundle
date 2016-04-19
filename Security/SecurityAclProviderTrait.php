@@ -9,6 +9,10 @@
  */
 namespace SN\ToolboxBundle\Security;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Acl\Dbal\AclProvider;
+use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
+
 /**
  * Trait SecurityAclProviderTrait
  */
@@ -21,15 +25,13 @@ trait SecurityAclProviderTrait
     protected $aclProvider;
 
     /**
-     * @return Symfony\Component\Security\Acl\Dbal\MutableAclProvider|Symfony\Component\Security\Acl\Dbal\AclProvider
+     * @return object|AclProvider|MutableAclProvider
      */
     public function getAclProvider()
     {
         if (null === $this->aclProvider) {
-            if (isset($this->container) && $this->container instanceof Symfony\Component\DependencyInjection\ContainerInterface) {
+            if (isset($this->container) && $this->container instanceof ContainerInterface) {
                 $this->aclProvider = $this->container->get('security.acl.provider');
-            } elseif ($this instanceof Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand) {
-                $this->aclProvider = $this->getContainer()->get('security.acl.provider');
             }
         }
 
