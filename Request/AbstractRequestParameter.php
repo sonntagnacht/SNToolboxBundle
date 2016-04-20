@@ -79,7 +79,7 @@ abstract class AbstractRequestParameter
     {
         $resolver->setDefined(array('_format'));
         $resolver->setAllowedTypes('_format', array('string'));
-        $resolver->setDefault('_format', array('json'));
+        $resolver->setDefault('_format', 'json');
         $resolver->setAllowedValues('_format', array('json'));
     }
 
@@ -119,7 +119,9 @@ abstract class AbstractRequestParameter
             if ($refl->hasProperty($key)) {
                 $method = 'get' . ucfirst($key);
                 if ($refl->hasMethod($method) && $this->$method() != $value) {
-                    $this->options[StringHelper::uncamelize($key, '_')] = $this->$method();
+                    $newKey = $key[0] == '_' ? StringHelper::uncamelize($key, '_') : $key;
+
+                    $this->options[$newKey] = $this->$method();
                 }
             }
         }
@@ -161,7 +163,7 @@ abstract class AbstractRequestParameter
      */
     public static function getAllowedBooleanTypes()
     {
-        return array('bool', 'null', 'string');
+        return array('bool', 'null', 'string', 'int');
     }
 
     /**
@@ -243,6 +245,9 @@ abstract class AbstractRequestParameter
         }
 
         $resolver->setAllowedTypes($name, array('string', 'int'));
+        if($allowNull) {
+            $resolver->addAllowedTypes($name, 'null');
+        }
 
         $resolver->setAllowedValues($name,
             function ($value) use ($allowNull) {
@@ -423,7 +428,7 @@ abstract class AbstractRequestParameter
      */
     public static function normalizeDateTimeString($str, $format = null)
     {
-        return new $format === null ? \DateTime($str) : \DateTime::createFromFormat($format, $str);
+        return new $format === null ? new \DateTime($str) : \DateTime::createFromFormat($format, $str);
     }
 
     /**
