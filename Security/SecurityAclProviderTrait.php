@@ -10,8 +10,6 @@
 namespace SN\ToolboxBundle\Security;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Security\Acl\Dbal\AclProvider;
-use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
 
 /**
  * Trait SecurityAclProviderTrait
@@ -20,12 +18,12 @@ trait SecurityAclProviderTrait
 {
 
     /**
-     * @var MutableAclProvider|AclProvider
+     * @var \Symfony\Component\Security\Acl\Dbal\MutableAclProvider|\Symfony\Component\Security\Acl\Dbal\AclProvider
      */
     protected $aclProvider;
 
     /**
-     * @return object|AclProvider|MutableAclProvider
+     * @return object|\Symfony\Component\Security\Acl\Dbal\AclProvider|\Symfony\Component\Security\Acl\Dbal\MutableAclProvider
      */
     public function getAclProvider()
     {
