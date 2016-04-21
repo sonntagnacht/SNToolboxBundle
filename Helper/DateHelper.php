@@ -39,4 +39,17 @@ class DateHelper
         }
     }
 
+    /**
+     * @param $monthsAgo
+     * @return \DateTime
+     */
+    public static function getFirstOfNMonthsAgo($monthsAgo)
+    {
+        $date = new \DateTime('first day of this month');
+        $date->sub(new \DateInterval(sprintf('P%sM', $monthsAgo)));
+        $date->setTime(0, 0, 0);
+
+        return $date;
+    }
+
 }
