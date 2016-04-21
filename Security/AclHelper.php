@@ -1,6 +1,6 @@
 <?php
 /**
- * umwelt-online-website
+ * sonntagnacht/toolbox-bundle
  * Created by PhpStorm.
  * File: AclHelper.php
  * User: con
@@ -36,13 +36,16 @@ namespace SN\ToolboxBundle\Security;
 
 use Symfony\Component\Security\Acl\Domain\Entry;
 use Symfony\Component\Security\Acl\Domain\Acl;
-use Symfony\Component\Security\Acl\Dbal\MutableAclProvider;
 use Symfony\Component\Security\Acl\Exception\NoAceFoundException;
+use Symfony\Component\Security\Acl\Model\MutableAclInterface;
+use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
+use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Acl\Model\AclProviderInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -59,25 +62,25 @@ class AclHelper
 {
 
     /**
-     * @var AclProviderInterface
+     * @var MutableAclProviderInterface
      */
     protected $provider;
 
     /**
-     * @var SecurityContextInterface
+     * @var TokenStorage
      */
-    protected $context;
+    protected $tokenStorage;
 
     /**
      * Constructor
      *
      * @param AclProviderInterface $provider
-     * @param SecurityContextInterface $context
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(AclProviderInterface $provider, SecurityContextInterface $context)
+    public function __construct(AclProviderInterface $provider, TokenStorageInterface $tokenStorage)
     {
-        $this->provider = $provider;
-        $this->context  = $context;
+        $this->provider     = $provider;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -93,8 +96,8 @@ class AclHelper
         $acl = $this->getAcl($entity);
 
         // retrieving the security identity of the currently logged-in user
-        $securityContext  = $this->context;
-        $user             = $user instanceof UserInterface ? $user : $securityContext->getToken()->getUser();
+        $tokenStorage  = $this->tokenStorage;
+        $user             = $user instanceof UserInterface ? $user : $tokenStorage->getToken()->getUser();
         $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
         // grant owner access
@@ -124,6 +127,7 @@ class AclHelper
         return $acl;
     }
 
+
     /**
      * Revoke a permission
      *
@@ -131,20 +135,22 @@ class AclHelper
      *     $manager->revoke($myDomainObject, 'delete'); // Remove "delete" permission for the $myDomainObject
      * </pre>
      *
-     * @param mixed $entity The DomainObject that we are revoking the permission for
-     * @param int|string $mask The mask to revoke
-     * @param UserInterface $user (optional) the user who should be applied to
-     *
-     * @return \ApplicationBundle\Security\Manager Reference to $this for fluent interface
+     * @param $entity
+     * @param int $mask
+     * @param null $user
+     * @return $this
      */
     public function revoke($entity, $mask = MaskBuilder::MASK_OWNER, $user = null)
     {
         $acl  = $this->getAcl($entity);
         $aces = $acl->getObjectAces();
 
-        $user             = $user instanceof UserInterface ? $user : $this->context->getToken()->getUser();
+        $user             = $user instanceof UserInterface ? $user : $this->tokenStorage->getToken()->getUser();
         $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
+        /**
+         * @var Entry $ace
+         */
         foreach ($aces as $i => $ace) {
             if ($securityIdentity->equals($ace->getSecurityIdentity())) {
                 $this->revokeMask($i, $acl, $ace, $mask);
@@ -156,14 +162,15 @@ class AclHelper
         return $this;
     }
 
+
     /**
      * Remove a mask
      *
-     * @param Acl $acl The ACL to update
-     * @param Entry $ace The ACE to remove the mask from
-     * @param unknown_type $mask The mask to remove
-     *
-     * @return \ApplicationBundle\Security\Manager Reference to $this for fluent interface
+     * @param $index
+     * @param Acl $acl
+     * @param Entry $ace
+     * @param $mask
+     * @return $this
      */
     protected function revokeMask($index, Acl $acl, Entry $ace, $mask)
     {
@@ -173,15 +180,14 @@ class AclHelper
     }
 
     /**
-     * Add a mask
+     * add a mask
      *
-     * @param SecurityIdentityInterface $securityIdentity The ACE to add
-     * @param integer|string $mask The initial mask to set
-     * @param ACL $acl The ACL to update
-     *
-     * @return \ApplicationBundle\Security\Manager Reference to $this for fluent interface
+     * @param $securityIdentity
+     * @param $mask
+     * @param $acl
+     * @return $this
      */
-    protected function addMask($securityIdentity, $mask, $acl)
+    protected function addMask(SecurityIdentityInterface $securityIdentity, $mask, MutableAclInterface $acl)
     {
         $acl->insertObjectAce($securityIdentity, $mask);
         $this->provider->updateAcl($acl);
@@ -202,7 +208,7 @@ class AclHelper
 
         try {
             $acl = $this->provider->findAcl($objectIdentity, array($securityIdentity));
-        } catch (AclNotFoundException $e) {
+        } catch (NoAceFoundException $e) {
             return false;
         }
 

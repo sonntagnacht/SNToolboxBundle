@@ -3,5 +3,40 @@ framework:
     session:
         storage_id: session.storage.mock_file
 
-acl:
-    connection: default
+security:
+
+    acl:
+        connection:
+            default
+
+    providers:
+        in_memory:
+            memory:
+                users:
+                    user1:
+                        password: user1
+                        roles: 'ROLE_USER'
+                    user2:
+                        password: user2
+                        roles: 'ROLE_USER'
+                    admin:
+                        password: admin
+                        roles: 'ROLE_ADMIN'
+
+    firewalls:
+        default:
+            anonymous: ~
+
+    access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }
+
+parameters:
+    request_listener.http_port:
+    request_listener.https_port:
+
+doctrine:
+    dbal:
+        host:     localhost
+        dbname:
+        user:
+        password:

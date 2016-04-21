@@ -24,8 +24,6 @@ use SN\ToolboxBundle\Helper\StringHelper;
 abstract class AbstractRequestParameter
 {
 
-    const DATE_ISO8601 = 'Y-m-d\TH:i:s.P';
-
     /**
      * @var array
      */
@@ -79,7 +77,7 @@ abstract class AbstractRequestParameter
     {
         $resolver->setDefined(array('_format'));
         $resolver->setAllowedTypes('_format', array('string'));
-        $resolver->setDefault('_format', array('json'));
+        $resolver->setDefault('_format', 'json');
         $resolver->setAllowedValues('_format', array('json'));
     }
 
@@ -119,7 +117,9 @@ abstract class AbstractRequestParameter
             if ($refl->hasProperty($key)) {
                 $method = 'get' . ucfirst($key);
                 if ($refl->hasMethod($method) && $this->$method() != $value) {
-                    $this->options[StringHelper::uncamelize($key, '_')] = $this->$method();
+                    $newKey = $key[0] == '_' ? StringHelper::uncamelize($key, '_') : $key;
+
+                    $this->options[$newKey] = $this->$method();
                 }
             }
         }
@@ -161,7 +161,7 @@ abstract class AbstractRequestParameter
      */
     public static function getAllowedBooleanTypes()
     {
-        return array('bool', 'null', 'string');
+        return array('bool', 'null', 'string', 'int');
     }
 
     /**
@@ -243,6 +243,9 @@ abstract class AbstractRequestParameter
         }
 
         $resolver->setAllowedTypes($name, array('string', 'int'));
+        if ($allowNull) {
+            $resolver->addAllowedTypes($name, 'null');
+        }
 
         $resolver->setAllowedValues($name,
             function ($value) use ($allowNull) {
@@ -423,7 +426,7 @@ abstract class AbstractRequestParameter
      */
     public static function normalizeDateTimeString($str, $format = null)
     {
-        return new $format === null ? \DateTime($str) : \DateTime::createFromFormat($format, $str);
+        return new $format === null ? new \DateTime($str) : \DateTime::createFromFormat($format, $str);
     }
 
     /**
@@ -445,6 +448,24 @@ abstract class AbstractRequestParameter
             return $input_time == $time;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * @param $str
+     * @throws \InvalidArgumentException
+     * @return string
+     */
+    public static function normalizeJSONDateStringToISO8601($str)
+    {
+        if (self::validateDateTimeString($str)) {
+            return $str;
+        } else {
+            $date = new \DateTime($str);
+            if ($date instanceof \DateTime) {
+                return $date->format(\DateTime::ISO8601);
+            }
+            throw new \InvalidArgumentException(sprintf('Unable to normalize DateString'));
         }
     }
 

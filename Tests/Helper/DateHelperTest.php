@@ -17,6 +17,18 @@ class DateHelperTest extends BaseTestCase
     public function testConvertStringToDate()
     {
         $this->assertTrue(DateHelper::convertStringToDate("today") instanceof \DateTime);
+
+        $this->assertNull(DateHelper::convertStringToDate(null));
+
+        $dateTime = new \DateTime("today");
+        $this->assertTrue(DateHelper::convertStringToDate($dateTime) instanceof \DateTime);
+
+        try {
+            DateHelper::convertStringToDate(123);
+        } catch (\Exception $e) {
+            $this->assertInstanceOf("InvalidArgumentException", $e);
+        }
+
     }
 
 }
