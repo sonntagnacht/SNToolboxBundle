@@ -24,8 +24,6 @@ use SN\ToolboxBundle\Helper\StringHelper;
 abstract class AbstractRequestParameter
 {
 
-    const DATE_ISO8601 = 'Y-m-d\TH:i:s.P';
-
     /**
      * @var array
      */
@@ -245,7 +243,7 @@ abstract class AbstractRequestParameter
         }
 
         $resolver->setAllowedTypes($name, array('string', 'int'));
-        if($allowNull) {
+        if ($allowNull) {
             $resolver->addAllowedTypes($name, 'null');
         }
 
@@ -450,6 +448,24 @@ abstract class AbstractRequestParameter
             return $input_time == $time;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * @param $str
+     * @throws \InvalidArgumentException
+     * @return string
+     */
+    public static function normalizeJSONDateStringToISO8601($str)
+    {
+        if (self::validateDateTimeString($str)) {
+            return $str;
+        } else {
+            $date = new \DateTime($str);
+            if ($date instanceof \DateTime) {
+                return $date->format(\DateTime::ISO8601);
+            }
+            throw new \InvalidArgumentException(sprintf('Unable to normalize DateString'));
         }
     }
 
