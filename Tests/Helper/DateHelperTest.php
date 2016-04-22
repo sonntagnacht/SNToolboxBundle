@@ -31,4 +31,13 @@ class DateHelperTest extends BaseTestCase
 
     }
 
+    public function testFetFirstOfNMonthsAgo()
+    {
+        $today = new \DateTime("today");
+        $ago   = DateHelper::getFirstOfNMonthsAgo(3);
+
+        $this->assertEquals($today->diff($ago)->m, 3);
+
+    }
+
 }
