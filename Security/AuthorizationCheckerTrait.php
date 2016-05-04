@@ -13,7 +13,7 @@ namespace SN\ToolboxBundle\Security;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
-class AuthorizationCheckerTrait
+trait AuthorizationCheckerTrait
 {
     /**
      * @var AuthorizationChecker
