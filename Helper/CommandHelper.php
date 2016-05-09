@@ -76,6 +76,8 @@ class CommandHelper
                 'horizontal'   => '-',
             ];
         }
+
+        $output->writeln('');
         $output->write(sprintf($style, $border['top-left']));
         $writeChar($border['horizontal'], strlen($title));
         $output->write(sprintf($style, $border['top-right']));
