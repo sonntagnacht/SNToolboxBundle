@@ -11,6 +11,7 @@
 namespace SN\ToolboxBundle\Security;
 
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 trait AuthorizationCheckerTrait
