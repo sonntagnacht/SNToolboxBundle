@@ -96,7 +96,7 @@ class AclHelper
         $acl = $this->getAcl($entity);
 
         // retrieving the security identity of the currently logged-in user
-        $tokenStorage  = $this->tokenStorage;
+        $tokenStorage     = $this->tokenStorage;
         $user             = $user instanceof UserInterface ? $user : $tokenStorage->getToken()->getUser();
         $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
@@ -153,7 +153,9 @@ class AclHelper
          */
         foreach ($aces as $i => $ace) {
             if ($securityIdentity->equals($ace->getSecurityIdentity())) {
-                $this->revokeMask($i, $acl, $ace, $mask);
+                if ($mask === $ace->getMask()) {
+                    $acl->deleteObjectAce($i);
+                }
             }
         }
 
@@ -162,22 +164,6 @@ class AclHelper
         return $this;
     }
 
-
-    /**
-     * Remove a mask
-     *
-     * @param $index
-     * @param Acl $acl
-     * @param Entry $ace
-     * @param $mask
-     * @return $this
-     */
-    protected function revokeMask($index, Acl $acl, Entry $ace, $mask)
-    {
-        $acl->updateObjectAce($index, $ace->getMask() & ~$mask);
-
-        return $this;
-    }
 
     /**
      * add a mask
