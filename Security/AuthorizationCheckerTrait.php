@@ -1,6 +1,6 @@
 <?php
 /**
- * umwelt-online-website
+ * sonntagnacht/toolbox-bundle
  * Created by PhpStorm.
  * File: AuthorizationCheckerTrait.php
  * User: con
