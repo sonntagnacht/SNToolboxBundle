@@ -79,12 +79,12 @@ class CommandHelper
 
         $output->writeln('');
         $output->write(sprintf($style, $border['top-left']));
-        $writeChar($border['horizontal'], strlen($title));
+        $writeChar($border['horizontal'], strlen(strip_tags($title)));
         $output->write(sprintf($style, $border['top-right']));
         $output->writeln('');
         $output->writeln(sprintf($style, sprintf($border['left'].'%s'.$border['right'], $title)));
         $output->write(sprintf($style, $border['bottom-left']));
-        $writeChar($border['horizontal'], strlen($title));
+        $writeChar($border['horizontal'], strlen(strip_tags($title)));
         $output->write(sprintf($style, $border['bottom-right']));
         $output->writeln('');
     }
