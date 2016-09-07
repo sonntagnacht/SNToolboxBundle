@@ -430,12 +430,24 @@ abstract class AbstractRequestParameter
     }
 
     /**
+     * validates a string of beeing a unix timestamp
+     *
+     * @param $timestamp
+     * @return bool
+     */
+    public static function isTimestamp($timestamp)
+    {
+        return ctype_digit($timestamp) && strtotime(date('Y-m-d H:i:s', $timestamp)) === (int)$timestamp;
+    }
+
+    /**
      * validates a DateTime String for ISO8601 standard
      *
      * @param $str
      * @return bool
      */
-    public static function validateDateTimeString($str)
+    public
+    static function validateDateTimeString($str)
     {
         if (preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$/', $str, $parts) === true) {
             $time = gmmktime($parts[4], $parts[5], $parts[6], $parts[2], $parts[3], $parts[1]);
@@ -456,7 +468,8 @@ abstract class AbstractRequestParameter
      * @throws \InvalidArgumentException
      * @return string
      */
-    public static function normalizeJSONDateStringToISO8601($str)
+    public
+    static function normalizeJSONDateStringToISO8601($str)
     {
         if (self::validateDateTimeString($str)) {
             return $str;
@@ -475,7 +488,8 @@ abstract class AbstractRequestParameter
      * @param $str
      * @return array
      */
-    public static function stringToArray($str)
+    public
+    static function stringToArray($str)
     {
         if (is_string($str)) {
             $decoded = json_decode($str);
