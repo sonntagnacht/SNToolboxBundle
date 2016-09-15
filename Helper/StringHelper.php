@@ -263,7 +263,7 @@ class StringHelper extends Transliterator
     {
         $key = '';
         for ($i = 0; $i < $length; $i++) {
-            $key .= $keyspace[mt_rand(0, count($keyspace) - 1)];
+            $key .= $keyspace[mt_rand(0, strlen($keyspace) - 1)];
         }
 
         return $key;
