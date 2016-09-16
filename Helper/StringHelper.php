@@ -310,4 +310,20 @@ class StringHelper extends Transliterator
         return null;
     }
 
+    /**
+     * @param $template
+     * @param array $variables
+     * @return mixed
+     */
+    public static function parseVars(String $str, array $variables)
+    {
+        return preg_replace_callback('#{(.*?)}#',
+            function ($match) use ($variables) {
+                $match[1] = trim($match[1], '$');
+
+                return $variables[$match[1]];
+            },
+            $str);
+    }
+
 }
