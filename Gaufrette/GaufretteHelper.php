@@ -10,6 +10,7 @@
 
 namespace SN\ToolboxBundle\Gaufrette;
 
+use SN\ToolboxBundle\Gaufrette\Model\GaufretteFileInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
@@ -72,6 +73,29 @@ class GaufretteHelper
     public static function getTmpFilename($prefix)
     {
         return tempnam(sys_get_temp_dir(), $prefix);
+    }
+
+    /**
+     * @param GaufretteFileInterface $entity
+     * @param bool $withFilename
+     * @return mixed
+     */
+    public static function getSubFilepath(GaufretteFileInterface $entity, $withFilename = true)
+    {
+        $path            = $entity->getGaufretteFilepath();
+        $gaufrettePrefix = sprintf('gaufrette://%s', $entity::getGaufretteFilesystem());
+
+        $subPath = str_replace($gaufrettePrefix, '', $path);
+
+        if (false === $withFilename) {
+            $subPath = explode('/', $subPath);
+            if (count($subPath) > 0) {
+                array_pop($subPath);
+                $subPath = implode('/', $subPath);
+            }
+        }
+
+        return $subPath;
     }
 
 }
