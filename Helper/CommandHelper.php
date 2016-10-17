@@ -333,6 +333,9 @@ class CommandHelper
             $missingLocalTable = new Table($output);
             $missingLocalTable->setHeaders(array('Param Name', sprintf('[%s] Value', $titleRemote)));
             foreach ($missingLocal as $key => $value) {
+                if(is_array($value)) {
+                    $value = sprintf('[%s]', implode(',', $value));
+                }
                 $missingLocalTable->addRow(array($key, is_null($value) ? 'NULL' : $value));
             }
             self::writeHeadline($output, sprintf('Missing [%s] Params:', $titleLocal));
@@ -343,6 +346,9 @@ class CommandHelper
             $missingRemoteTable = new Table($output);
             $missingRemoteTable->setHeaders(array('Param Name', sprintf('[%s] Value', $titleLocal)));
             foreach ($missingRemote as $key => $value) {
+                if(is_array($value)) {
+                    $value = sprintf('[%s]', implode(',', $value));
+                }
                 $missingRemoteTable->addRow(array($key, is_null($value) ? 'NULL' : $value));
             }
             self::writeHeadline($output, sprintf('Missing [%s] Params:', $titleRemote));
