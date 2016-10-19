@@ -1,1 +1,5 @@
-
+services:
+    sn.toolbox.validation_helper:
+        class: SN\ToolboxBundle\Helper\ValidationHelper
+        lazy: true
+        arguments: ["@service_container"]
