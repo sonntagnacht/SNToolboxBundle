@@ -40,7 +40,7 @@ interface GaufretteFileInterface
     /**
      * returns the sub-directory path within the gaufrette filesystem or '' when its located directly in it
      *
-     * @info you may implement it by yourself or use SN\ToolboxBundle\Gaufrette\GaufretteHelper::getSubFilepath
+     * info: you may implement it by yourself or use SN\ToolboxBundle\Gaufrette\GaufretteHelper::getSubFilepath
      *
      * @param bool $withFilename
      * @return string
