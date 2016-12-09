@@ -10,6 +10,7 @@
 
 namespace SN\ToolboxBundle\Gaufrette;
 
+use Gaufrette\Filesystem;
 use SN\ToolboxBundle\Gaufrette\Model\GaufretteFileInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
