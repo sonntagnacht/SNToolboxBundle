@@ -98,4 +98,25 @@ class GaufretteHelper
         return $subPath;
     }
 
+    /**
+     * @param Filesystem $filesystem
+     * @param $sourcePath
+     * @param $destPath
+     */
+    public static function moveWithinFilesystem(Filesystem $filesystem, $sourcePath, $destPath)
+    {
+        $filesystem->write($dest, $filesystem->read($sourcePath));
+        $filesystem->delete($sourcePath);
+    }
+
+    /**
+     * @param Filesystem $filesystem
+     * @param $sourcePath
+     * @param $destPath
+     */
+    public static function copyWithinFilesystem(Filesystem $filesystem, $sourcePath, $destPath)
+    {
+        $filesystem->write($dest, $filesystem->read($sourcePath));
+    }
+
 }
