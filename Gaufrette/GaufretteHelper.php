@@ -64,7 +64,7 @@ class GaufretteHelper
      */
     public static function getPathForFilename($fileSystem, $fileName)
     {
-        return sprintf('gaufrette://%s/%s', $fileSystem, $fileName);
+        return sprintf('gaufrette://%s', str_replace('//', '/', sprintf('%s/%s', $fileSystem, $fileName)));
     }
 
     /**
