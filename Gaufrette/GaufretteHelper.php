@@ -103,10 +103,11 @@ class GaufretteHelper
      * @param Filesystem $filesystem
      * @param $sourcePath
      * @param $destPath
+     * @param bool $ovewrite
      */
-    public static function moveWithinFilesystem(Filesystem $filesystem, $sourcePath, $destPath)
+    public static function moveWithinFilesystem(Filesystem $filesystem, $sourcePath, $destPath, $ovewrite = false)
     {
-        $filesystem->write($destPath, $filesystem->read($sourcePath));
+        $filesystem->write($destPath, $filesystem->read($sourcePath), $ovewrite);
         $filesystem->delete($sourcePath);
     }
 
@@ -114,10 +115,11 @@ class GaufretteHelper
      * @param Filesystem $filesystem
      * @param $sourcePath
      * @param $destPath
+     * @param bool $overwrite
      */
-    public static function copyWithinFilesystem(Filesystem $filesystem, $sourcePath, $destPath)
+    public static function copyWithinFilesystem(Filesystem $filesystem, $sourcePath, $destPath, $overwrite = false)
     {
-        $filesystem->write($destPath, $filesystem->read($sourcePath));
+        $filesystem->write($destPath, $filesystem->read($sourcePath), $overwrite);
     }
 
 }
