@@ -17,6 +17,10 @@ namespace SN\ToolboxBundle\Helper;
  */
 class TraversableHelper
 {
+    /**
+     * @param mixed $arg
+     * @return bool
+     */
     public static function isTraversible($arg)
     {
         if (is_array($arg)) {
