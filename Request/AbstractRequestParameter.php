@@ -472,7 +472,8 @@ abstract class AbstractRequestParameter
         if (self::validateDateTimeString($str)) {
             return $str;
         } else {
-            $date = new \DateTime($str);
+            $date = new \DateTime($str, new \DateTimeZone('UTC'));
+            $date->setTimezone(new \DateTimeZone('Europe/Berlin'));
             if ($date instanceof \DateTime) {
                 return $date->format(\DateTime::ISO8601);
             }
