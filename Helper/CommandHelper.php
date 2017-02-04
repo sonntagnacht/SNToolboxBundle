@@ -10,11 +10,11 @@
 namespace SN\ToolboxBundle\Helper;
 
 
+use SN\ToolboxBundle\Exception\MissingParameterException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
-use SN\ToolboxBundle\Exception\MissingParameterException;
 
 class CommandHelper
 {
@@ -39,7 +39,8 @@ class CommandHelper
         $title,
         $style = '<fg=white>%s</fg=white>',
         $fancyBorder = null
-    ) {
+    )
+    {
         self::$headlineCounter++;
 
         // give the title some extra whitespace and the counter..
@@ -82,7 +83,7 @@ class CommandHelper
         $writeChar($border['horizontal'], strlen(strip_tags($title)));
         $output->write(sprintf($style, $border['top-right']));
         $output->writeln('');
-        $output->writeln(sprintf($style, sprintf($border['left'].'%s'.$border['right'], $title)));
+        $output->writeln(sprintf($style, sprintf($border['left'] . '%s' . $border['right'], $title)));
         $output->write(sprintf($style, $border['bottom-left']));
         $writeChar($border['horizontal'], strlen(strip_tags($title)));
         $output->write(sprintf($style, $border['bottom-right']));
@@ -256,7 +257,8 @@ class CommandHelper
         array $local,
         $titleRemote = 'Remote',
         $titleLocal = 'Local'
-    ) {
+    )
+    {
         if (!isset($remote['parameters']) || !is_array($remote['parameters'])) {
             throw new \InvalidArgumentException(sprintf('Remote Array needs to have a [parameters] array'));
         }
@@ -333,7 +335,7 @@ class CommandHelper
             $missingLocalTable = new Table($output);
             $missingLocalTable->setHeaders(array('Param Name', sprintf('[%s] Value', $titleRemote)));
             foreach ($missingLocal as $key => $value) {
-                if(is_array($value)) {
+                if (is_array($value)) {
                     $value = sprintf('[%s]', implode(',', $value));
                 }
                 $missingLocalTable->addRow(array($key, is_null($value) ? 'NULL' : $value));
@@ -346,7 +348,7 @@ class CommandHelper
             $missingRemoteTable = new Table($output);
             $missingRemoteTable->setHeaders(array('Param Name', sprintf('[%s] Value', $titleLocal)));
             foreach ($missingRemote as $key => $value) {
-                if(is_array($value)) {
+                if (is_array($value)) {
                     $value = sprintf('[%s]', implode(',', $value));
                 }
                 $missingRemoteTable->addRow(array($key, is_null($value) ? 'NULL' : $value));
@@ -378,4 +380,43 @@ class CommandHelper
         $table->setStyle($tableStyle);
     }
 
+    /**
+     * @param String $cmd
+     * @param array $config
+     * @param OutputInterface $output
+     * @throws MissingParameterException
+     */
+    public static function executeRemoteCommand(String $cmd, array $config, OutputInterface $output)
+    {
+        if (empty($config["user"]) === true) {
+            throw new MissingParameterException(
+                sprintf('[user] Parameters missing in $config array.')
+            );
+        }
+
+        if (empty($config["host"]) === true) {
+            throw new MissingParameterException(
+                sprintf('[host] Parameters missing in $config array.')
+            );
+        }
+
+        if (empty($config["port"]) === true) {
+            $config["port"] = 22;
+        }
+
+        if (empty($config["webroot"]) === true) {
+            $config["webroot"] = "./";
+        }
+
+        $cmd = sprintf(
+            'ssh %s@%s -p %s "cd %s; %s"',
+            $config["user"],
+            $config["host"],
+            $config["port"],
+            $config["webroot"],
+            addslashes($config)
+        );
+
+        self::executeCommand($cmd, $output);
+    }
 }
