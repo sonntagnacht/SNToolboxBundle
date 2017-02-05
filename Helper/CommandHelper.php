@@ -223,7 +223,7 @@ class CommandHelper
      */
     public static function executeCommand($command, OutputInterface $output = null, $write = true)
     {
-        if (($output instanceof OutputInterface) === false) {
+        if (($output instanceof OutputInterface) === true) {
             $output->writeln(sprintf("<info>%s</info>", $command));
         }
 
@@ -232,7 +232,7 @@ class CommandHelper
         $process->setIdleTimeout(600);
         $process->run(
             function ($type, $buffer) use ($output, $write) {
-                if (($output instanceof OutputInterface) && $write) {
+                if (($output instanceof OutputInterface) === true && $write) {
                     $output->write($buffer);
                 }
             }
