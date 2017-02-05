@@ -221,16 +221,18 @@ class CommandHelper
      * @param boolean $write
      * @return string
      */
-    public static function executeCommand($command, OutputInterface $output, $write = true)
+    public static function executeCommand($command, OutputInterface $output = null, $write = true)
     {
-        $output->writeln(sprintf("<info>%s</info>", $command));
+        if (($output instanceof OutputInterface) === false) {
+            $output->writeln(sprintf("<info>%s</info>", $command));
+        }
 
         $process = new Process($command);
         $process->setTimeout(3600);
         $process->setIdleTimeout(600);
         $process->run(
             function ($type, $buffer) use ($output, $write) {
-                if ($write) {
+                if (($output instanceof OutputInterface) && $write) {
                     $output->write($buffer);
                 }
             }
@@ -384,9 +386,10 @@ class CommandHelper
      * @param String $cmd
      * @param array $config
      * @param OutputInterface $output
+     * @param bool $write
      * @throws MissingParameterException
      */
-    public static function executeRemoteCommand(String $cmd, array $config, OutputInterface $output)
+    public static function executeRemoteCommand($cmd, array $config, OutputInterface $output, $write = true)
     {
         if (empty($config["user"]) === true) {
             throw new MissingParameterException(
@@ -414,9 +417,9 @@ class CommandHelper
             $config["host"],
             $config["port"],
             $config["webroot"],
-            addslashes($config)
+            addslashes($cmd)
         );
 
-        self::executeCommand($cmd, $output);
+        self::executeCommand($cmd, $output, $write);
     }
 }
