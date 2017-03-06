@@ -389,7 +389,7 @@ class CommandHelper
      * @param bool $write
      * @throws MissingParameterException
      */
-    public static function executeRemoteCommand($cmd, array $config, OutputInterface $output, $write = true)
+    public static function executeRemoteCommand($cmd, array $config, OutputInterface $output = null, $write = true)
     {
         if (empty($config["user"]) === true) {
             throw new MissingParameterException(
@@ -420,6 +420,6 @@ class CommandHelper
             addslashes($cmd)
         );
 
-        self::executeCommand($cmd, $output, $write);
+        return self::executeCommand($cmd, $output, $write);
     }
 }
