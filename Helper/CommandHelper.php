@@ -221,25 +221,68 @@ class CommandHelper
      * @param boolean $write
      * @return string
      */
-    public static function executeCommand($command, OutputInterface $output = null, $write = true)
+    public static function executeCommand($command, OutputInterface $output = null, $write = true, $waitMsg = null)
     {
         if (($output instanceof OutputInterface) === true) {
-            $output->writeln(sprintf("<info>%s</info>", $command));
+            if (null === $waitMsg) {
+                $output->writeln(sprintf("<info>%s</info>", $command));
+            } else {
+                $output->writeln('');
+            }
         }
 
         $process = new Process($command);
         $process->setTimeout(3600);
         $process->setIdleTimeout(600);
-        $process->run(
-            function ($type, $buffer) use ($output, $write) {
-                if (($output instanceof OutputInterface) === true && $write) {
-                    $output->write($buffer);
+
+        if ($write) {
+            $process->run(
+                function ($type, $buffer) use ($output, $write) {
+                    if (($output instanceof OutputInterface) === true) {
+                        $output->write($buffer);
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            $process->start();
+        }
+
+        $i = 0;
+
         while ($process->isRunning()) {
+            if ($waitMsg) {
+                // Move the cursor to the beginning of the line
+                $output->write("\x0D");
+
+                // Erase the line
+                $output->write("\x1B[2K");
+
+                switch ($i % 4) {
+                    case 0:
+                        $output->write(sprintf('| %s', $waitMsg));
+                        break;
+                    case 1:
+                        $output->write(sprintf('/ %s', $waitMsg));
+                        break;
+                    case 2:
+                        $output->write(sprintf('- %s', $waitMsg));
+                        break;
+                    case 3:
+                        $output->write(sprintf('\\ %s', $waitMsg));
+                        break;
+                }
+                $i++;
+            }
+
             $process->checkTimeout();
-            usleep(1000);
+            usleep(100000);
+        }
+        if ($waitMsg) {
+            // Move the cursor to the beginning of the line
+            $output->write("\x0D");
+
+            // Erase the line
+            $output->write("\x1B[2K");
         }
 
         return trim($process->getOutput());
@@ -253,7 +296,8 @@ class CommandHelper
      * @param string $titleLocal
      * @throws MissingParameterException
      */
-    public static function compareParametersYml(
+    public
+    static function compareParametersYml(
         OutputInterface $output,
         array $remote,
         array $local,
@@ -369,7 +413,8 @@ class CommandHelper
      * @param Table $table
      * @param string $style - uses sprintf to include table border chars
      */
-    public static function setTableColor(Table $table, $style = '<fg=yellow>%s</>')
+    public
+    static function setTableColor(Table $table, $style = '<fg=yellow>%s</>')
     {
         // by default, this is based on the default style
         $tableStyle = new TableStyle();
@@ -389,7 +434,8 @@ class CommandHelper
      * @param bool $write
      * @throws MissingParameterException
      */
-    public static function executeRemoteCommand($cmd, array $config, OutputInterface $output = null, $write = true)
+    public
+    static function executeRemoteCommand($cmd, array $config, OutputInterface $output = null, $write = true)
     {
         if (empty($config["user"]) === true) {
             throw new MissingParameterException(
