@@ -2,7 +2,7 @@
 /**
  * SNBundle
  * Created by PhpStorm.
- * File: DatavalueHelper.php
+ * File: DataValueHelper.php
  * User: thomas
  * Date: 18.05.17
  * Time: 16:13
@@ -11,7 +11,7 @@
 namespace SN\ToolboxBundle\Helper;
 
 
-class DatavalueHelper
+class DataValueHelper
 {
     /**
      * @param $bytes integer
