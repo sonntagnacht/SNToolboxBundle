@@ -23,6 +23,25 @@ class GaufretteHelper
 {
 
     /**
+     * returns the filesystemSize
+     *
+     * @param Filesystem $filesystem
+     * @return int
+     */
+    public static function getSize(Filesystem $filesystem)
+    {
+        $size = 0;
+        /**
+         * @var $key
+         */
+        foreach ($filesystem->keys() as $key) {
+            $size += $filesystem->size($key);
+        }
+
+        return $size;
+    }
+
+    /**
      * returns the filename without the *.extension
      *
      * @param string $name
