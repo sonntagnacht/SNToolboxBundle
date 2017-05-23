@@ -221,6 +221,14 @@ class CommandHelper
      * @param boolean $write
      * @return string
      */
+
+    /**
+     * @param $command
+     * @param OutputInterface|null $output
+     * @param bool $write
+     * @param null|string $waitMsg
+     * @return string
+     */
     public static function executeCommand($command, OutputInterface $output = null, $write = true, $waitMsg = null)
     {
         if (($output instanceof OutputInterface) === true) {
@@ -250,7 +258,7 @@ class CommandHelper
         $i = 0;
 
         while ($process->isRunning()) {
-            if ($waitMsg) {
+            if (is_string($waitMsg)) {
                 // Move the cursor to the beginning of the line
                 $output->write("\x0D");
 
