@@ -262,6 +262,10 @@ class CommandHelper
                 $output->writeln($waitMsg);
             }
 
+            while ($process->isRunning()) {
+                ;
+            }
+
             return trim($process->getOutput());
         }
 
