@@ -189,25 +189,25 @@ class CommandHelper
         foreach ($e->getTrace() as $key => $trace) {
             $output->writeln($key);
             if (array_key_exists('file', $trace)) {
-                $output->writeln(sprintf('  File:     %s', (string)$trace['file']));
+                $output->writeln(sprintf('  File:     %s', (string) $trace['file']));
             }
             if (array_key_exists('line', $trace)) {
-                $output->writeln(sprintf('  Line:     %s', (string)$trace['line']));
+                $output->writeln(sprintf('  Line:     %s', (string) $trace['line']));
             }
             if (array_key_exists('function', $trace)) {
-                $output->writeln(sprintf('  Function: %s', (string)$trace['function']));
+                $output->writeln(sprintf('  Function: %s', (string) $trace['function']));
             }
             if (array_key_exists('class', $trace)) {
-                $output->writeln(sprintf('  Class:    %s', (string)$trace['class']));
+                $output->writeln(sprintf('  Class:    %s', (string) $trace['class']));
             }
             if (array_key_exists('type', $trace)) {
-                $output->writeln(sprintf('  Type:     %s', (string)$trace['type']));
+                $output->writeln(sprintf('  Type:     %s', (string) $trace['type']));
             }
             if (array_key_exists('args', $trace)) {
                 $output->writeln(
                     sprintf(
                         '  args:     %s',
-                        implode(', ', StringHelper::transformToArrayString((array)$trace['args']))
+                        implode(', ', StringHelper::transformToArrayString((array) $trace['args']))
                     )
                 );
             }
@@ -257,6 +257,15 @@ class CommandHelper
 
         $i = 0;
 
+        if (false === $output->isVerbose()) {
+            if (is_string($waitMsg)) {
+                $output->writeln($waitMsg);
+            }
+
+            return trim($process->getOutput());
+        }
+
+        // very beautiful waiting animation
         while ($process->isRunning()) {
             if (is_string($waitMsg)) {
                 // Move the cursor to the beginning of the line
@@ -284,13 +293,6 @@ class CommandHelper
 
             $process->checkTimeout();
             usleep(100000);
-        }
-        if ($waitMsg) {
-            // Move the cursor to the beginning of the line
-            $output->write("\x0D");
-
-            // Erase the line
-            $output->write("\x1B[2K");
         }
 
         return trim($process->getOutput());
