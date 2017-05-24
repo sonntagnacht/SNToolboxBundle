@@ -257,6 +257,16 @@ class CommandHelper
 
         $i = 0;
 
+        // if no output is given, no nice messages can be shown anyways
+        if (false === $output instanceof OutputInterface) {
+
+            while ($process->isRunning()) {
+                ;
+            }
+
+            return trim($process->getOutput());
+        }
+
         if (false === $output->isVerbose()) {
             if (is_string($waitMsg)) {
                 $output->writeln($waitMsg);
@@ -310,8 +320,7 @@ class CommandHelper
      * @param string $titleLocal
      * @throws MissingParameterException
      */
-    public
-    static function compareParametersYml(
+    public static function compareParametersYml(
         OutputInterface $output,
         array $remote,
         array $local,
@@ -427,8 +436,7 @@ class CommandHelper
      * @param Table $table
      * @param string $style - uses sprintf to include table border chars
      */
-    public
-    static function setTableColor(Table $table, $style = '<fg=yellow>%s</>')
+    public static function setTableColor(Table $table, $style = '<fg=yellow>%s</>')
     {
         // by default, this is based on the default style
         $tableStyle = new TableStyle();
@@ -448,8 +456,7 @@ class CommandHelper
      * @param bool $write
      * @throws MissingParameterException
      */
-    public
-    static function executeRemoteCommand($cmd, array $config, OutputInterface $output = null, $write = true)
+    public static function executeRemoteCommand($cmd, array $config, OutputInterface $output = null, $write = true)
     {
         if (empty($config["user"]) === true) {
             throw new MissingParameterException(
