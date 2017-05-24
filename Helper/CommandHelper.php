@@ -189,25 +189,25 @@ class CommandHelper
         foreach ($e->getTrace() as $key => $trace) {
             $output->writeln($key);
             if (array_key_exists('file', $trace)) {
-                $output->writeln(sprintf('  File:     %s', (string) $trace['file']));
+                $output->writeln(sprintf('  File:     %s', (string)$trace['file']));
             }
             if (array_key_exists('line', $trace)) {
-                $output->writeln(sprintf('  Line:     %s', (string) $trace['line']));
+                $output->writeln(sprintf('  Line:     %s', (string)$trace['line']));
             }
             if (array_key_exists('function', $trace)) {
-                $output->writeln(sprintf('  Function: %s', (string) $trace['function']));
+                $output->writeln(sprintf('  Function: %s', (string)$trace['function']));
             }
             if (array_key_exists('class', $trace)) {
-                $output->writeln(sprintf('  Class:    %s', (string) $trace['class']));
+                $output->writeln(sprintf('  Class:    %s', (string)$trace['class']));
             }
             if (array_key_exists('type', $trace)) {
-                $output->writeln(sprintf('  Type:     %s', (string) $trace['type']));
+                $output->writeln(sprintf('  Type:     %s', (string)$trace['type']));
             }
             if (array_key_exists('args', $trace)) {
                 $output->writeln(
                     sprintf(
                         '  args:     %s',
-                        implode(', ', StringHelper::transformToArrayString((array) $trace['args']))
+                        implode(', ', StringHelper::transformToArrayString((array)$trace['args']))
                     )
                 );
             }
@@ -225,88 +225,70 @@ class CommandHelper
     /**
      * @param $command
      * @param OutputInterface|null $output
-     * @param bool $write
-     * @param null|string $waitMsg
+     * @param bool|string $printOutput
      * @return string
      */
-    public static function executeCommand($command, OutputInterface $output = null, $write = true, $waitMsg = null)
+    public static function executeCommand($command, OutputInterface $output = null, $printOutput = true)
     {
-        if (($output instanceof OutputInterface) === true) {
-            if (null === $waitMsg) {
-                $output->writeln(sprintf("<info>%s</info>", $command));
-            } else {
-                $output->writeln('');
-            }
-        }
 
         $process = new Process($command);
         $process->setTimeout(3600);
         $process->setIdleTimeout(600);
 
-        if ($write) {
+        if (false === ($output instanceof OutputInterface)) {
+            $process->run();
+
+            return trim($process->getOutput());
+        }
+
+        if (true === is_string($printOutput)) {
+            if (true === $output->isVerbose()) {
+                $process->start();
+                $i = 0;
+
+                while ($process->isRunning()) {
+                    switch ($i) {
+                        case 0:
+                            $output->write(sprintf('| %s', $printOutput));
+                            break;
+                        case 1:
+                            $output->write(sprintf('/ %s', $printOutput));
+                            break;
+                        case 2:
+                            $output->write(sprintf('- %s', $printOutput));
+                            break;
+                        case 3:
+                            $output->write(sprintf('\\ %s', $printOutput));
+                            break;
+                    }
+
+                    $i++;
+                    $i = $i % 4;
+                    $process->checkTimeout();
+                    usleep(100000);
+                    $output->write("\x0D");
+                    $output->write("\x1B[2K");
+                }
+
+                $output->writeln($printOutput);
+            } else {
+                $output->writeln($printOutput);
+                $process->run();
+            }
+
+            return trim($process->getOutput());
+        }
+
+        $output->writeln(sprintf("<info>%s</info>", $command));
+
+        if (true === $printOutput) {
             $process->run(
-                function ($type, $buffer) use ($output, $write) {
+                function ($type, $buffer) use ($output, $printOutput) {
                     if (($output instanceof OutputInterface) === true) {
                         $output->write($buffer);
                     }
                 }
             );
-        } else {
-            $process->start();
-        }
-
-        $i = 0;
-
-        // if no output is given, no nice messages can be shown anyways
-        if (false === $output instanceof OutputInterface) {
-
-            while ($process->isRunning()) {
-                ;
-            }
-
-            return trim($process->getOutput());
-        }
-
-        if (false === $output->isVerbose()) {
-            if (is_string($waitMsg)) {
-                $output->writeln($waitMsg);
-            }
-
-            while ($process->isRunning()) {
-                ;
-            }
-
-            return trim($process->getOutput());
-        }
-
-        // very beautiful waiting animation
-        while ($process->isRunning()) {
-            if (is_string($waitMsg)) {
-                // Move the cursor to the beginning of the line
-                $output->write("\x0D");
-
-                // Erase the line
-                $output->write("\x1B[2K");
-
-                switch ($i % 4) {
-                    case 0:
-                        $output->write(sprintf('| %s', $waitMsg));
-                        break;
-                    case 1:
-                        $output->write(sprintf('/ %s', $waitMsg));
-                        break;
-                    case 2:
-                        $output->write(sprintf('- %s', $waitMsg));
-                        break;
-                    case 3:
-                        $output->write(sprintf('\\ %s', $waitMsg));
-                        break;
-                }
-                $i++;
-            }
-
-            $process->checkTimeout();
-            usleep(100000);
         }
 
         return trim($process->getOutput());
@@ -320,7 +302,8 @@ class CommandHelper
      * @param string $titleLocal
      * @throws MissingParameterException
      */
-    public static function compareParametersYml(
+    public
+    static function compareParametersYml(
         OutputInterface $output,
         array $remote,
         array $local,
@@ -436,7 +419,8 @@ class CommandHelper
      * @param Table $table
      * @param string $style - uses sprintf to include table border chars
      */
-    public static function setTableColor(Table $table, $style = '<fg=yellow>%s</>')
+    public
+    static function setTableColor(Table $table, $style = '<fg=yellow>%s</>')
     {
         // by default, this is based on the default style
         $tableStyle = new TableStyle();
@@ -456,7 +440,8 @@ class CommandHelper
      * @param bool $write
      * @throws MissingParameterException
      */
-    public static function executeRemoteCommand($cmd, array $config, OutputInterface $output = null, $write = true)
+    public
+    static function executeRemoteCommand($cmd, array $config, OutputInterface $output = null, $write = true)
     {
         if (empty($config["user"]) === true) {
             throw new MissingParameterException(
