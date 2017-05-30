@@ -189,25 +189,25 @@ class CommandHelper
         foreach ($e->getTrace() as $key => $trace) {
             $output->writeln($key);
             if (array_key_exists('file', $trace)) {
-                $output->writeln(sprintf('  File:     %s', (string) $trace['file']));
+                $output->writeln(sprintf('  File:     %s', (string)$trace['file']));
             }
             if (array_key_exists('line', $trace)) {
-                $output->writeln(sprintf('  Line:     %s', (string) $trace['line']));
+                $output->writeln(sprintf('  Line:     %s', (string)$trace['line']));
             }
             if (array_key_exists('function', $trace)) {
-                $output->writeln(sprintf('  Function: %s', (string) $trace['function']));
+                $output->writeln(sprintf('  Function: %s', (string)$trace['function']));
             }
             if (array_key_exists('class', $trace)) {
-                $output->writeln(sprintf('  Class:    %s', (string) $trace['class']));
+                $output->writeln(sprintf('  Class:    %s', (string)$trace['class']));
             }
             if (array_key_exists('type', $trace)) {
-                $output->writeln(sprintf('  Type:     %s', (string) $trace['type']));
+                $output->writeln(sprintf('  Type:     %s', (string)$trace['type']));
             }
             if (array_key_exists('args', $trace)) {
                 $output->writeln(
                     sprintf(
                         '  args:     %s',
-                        implode(', ', StringHelper::transformToArrayString((array) $trace['args']))
+                        implode(', ', StringHelper::transformToArrayString((array)$trace['args']))
                     )
                 );
             }
@@ -243,32 +243,11 @@ class CommandHelper
 
         if (true === is_string($printOutput)) {
             if (true === $output->isVerbose()) {
-                $process->start();
-                $i = 0;
-
-                while ($process->isRunning()) {
-                    switch ($i) {
-                        case 0:
-                            $output->write(sprintf('| %s', $printOutput));
-                            break;
-                        case 1:
-                            $output->write(sprintf('/ %s', $printOutput));
-                            break;
-                        case 2:
-                            $output->write(sprintf('- %s', $printOutput));
-                            break;
-                        case 3:
-                            $output->write(sprintf('\\ %s', $printOutput));
-                            break;
-                    }
-
-                    $i++;
-                    $i = $i % 4;
-                    $process->checkTimeout();
-                    usleep(100000);
-                    $output->write("\x0D");
-                    $output->write("\x1B[2K");
-                }
+                $cmdLoader = new CommandLoader($output);
+                $cmdLoader->setMessage($printOutput);
+                $cmdLoader->run();
+                $process->run();
+                $cmdLoader->stop("");
 
                 $output->writeln($printOutput);
             } else {
@@ -289,7 +268,7 @@ class CommandHelper
                     }
                 }
             );
-        }else{
+        } else {
             $process->run();
         }
 
