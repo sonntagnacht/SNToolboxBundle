@@ -43,7 +43,7 @@ class CommandLoader
         )
     );
 
-    protected $pid;
+    protected $pid = 0;
 
     protected $counter = 0;
 
@@ -66,7 +66,9 @@ class CommandLoader
     {
         $this->message = $message;
 
-        if (false == $this->output->isVerbose()) {
+        if (false == $this->output->isVerbose() ||
+            false === function_exists("pcntl_forc")
+        ) {
             $this->output->writeln($this->message);
 
             return $this;
@@ -89,7 +91,8 @@ class CommandLoader
 
     public function run()
     {
-        if (false == $this->output->isVerbose()) {
+        if (false == $this->output->isVerbose() ||
+            false === function_exists("pcntl_forc")) {
             return;
         }
 
