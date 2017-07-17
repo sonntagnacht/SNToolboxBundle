@@ -12,22 +12,31 @@ namespace SN\ToolboxBundle\Request;
 
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\Options;
 use SN\ToolboxBundle\Helper\StringHelper;
+use UO\Bundle\UtilityBundle\Serializer\SerializeHelper;
 
 /**
  * Class AbstractRequestParameter
  *
- * @package SN\ToolboxBundle\Request
+ * @package UO\Bundle\UtilityBundle\Request
  */
 abstract class AbstractRequestParameter
 {
+
+    const DATE_ISO8601 = 'Y-m-d\TH:i:s.P';
 
     /**
      * @var array
      */
     protected $options = array();
+
+    /**
+     * @var
+     */
+    protected $_format;
 
     /**
      * @param array $options
@@ -77,7 +86,7 @@ abstract class AbstractRequestParameter
     {
         $resolver->setDefined(array('_format'));
         $resolver->setAllowedTypes('_format', array('string'));
-        $resolver->setDefault('_format', 'json');
+        $resolver->setDefault('_format', array('json'));
         $resolver->setAllowedValues('_format', array('json'));
     }
 
@@ -103,6 +112,28 @@ abstract class AbstractRequestParameter
     }
 
     /**
+     * get all options as an array with unamelized names for serialization
+     *
+     * @param bool $uncamelize
+     * @return array
+     */
+    public function getOptionsArray(bool $uncamelize = true): array
+    {
+        $options = $this->getOptions();
+        if ($uncamelize) {
+            foreach ($options as $key => $value) {
+                $newKey = StringHelper::uncamelize($key, '_');
+                unset($options[$key]);
+                $options[$newKey] = $value;
+            }
+        }
+
+        ksort($options);
+
+        return $options;
+    }
+
+    /**
      * updates the original options and properties back to options
      */
     protected function updateOptionsFromProperties()
@@ -117,9 +148,7 @@ abstract class AbstractRequestParameter
             if ($refl->hasProperty($key)) {
                 $method = 'get' . ucfirst($key);
                 if ($refl->hasMethod($method) && $this->$method() != $value) {
-                    $newKey = $key[0] == '_' ? StringHelper::uncamelize($key, '_') : $key;
-
-                    $this->options[$newKey] = $this->$method();
+                    $this->options[StringHelper::uncamelize($key, '_')] = $this->$method();
                 }
             }
         }
@@ -161,7 +190,15 @@ abstract class AbstractRequestParameter
      */
     public static function getAllowedBooleanTypes()
     {
-        return array('bool', 'null', 'string', 'int');
+        return array('bool', 'null', 'string');
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllowedStringTypes()
+    {
+        return array('null', 'string');
     }
 
     /**
@@ -176,7 +213,7 @@ abstract class AbstractRequestParameter
     {
         $unique = array();
         $value  = self::stringToArray($value);
-        if (count($value) == 0 && $allowEmpty === false) {
+        if (count($value) == 0 && $allowEmpty == false) {
             return false;
         }
         foreach ($value as $id) {
@@ -230,11 +267,11 @@ abstract class AbstractRequestParameter
      * @param bool $allowNull (false)
      */
     public static function addIntParam(OptionsResolver $resolver,
-                                       $name,
-                                       $required = false,
-                                       $abs = true,
-                                       $default = null,
-                                       $allowNull = false)
+                                       String $name,
+                                       bool $required = false,
+                                       bool $abs = true,
+                                       int $default = null,
+                                       bool $allowNull = false)
     {
         if ($required) {
             $resolver->setRequired($name);
@@ -243,18 +280,20 @@ abstract class AbstractRequestParameter
         }
 
         $resolver->setAllowedTypes($name, array('string', 'int'));
-        if ($allowNull) {
-            $resolver->addAllowedTypes($name, 'null');
-        }
 
         $resolver->setAllowedValues($name,
-            function ($value) use ($allowNull) {
-                return $allowNull ? is_numeric($value) || is_null($value) : is_numeric($value);
+            function ($value) use ($allowNull, $name) {
+                if ($allowNull) {
+                    // also allow empty strings
+                    return is_numeric($value) || is_null($value) || strlen($value) === 0;
+                }
+
+                return is_numeric($value);
             }
         );
 
         $resolver->setNormalizer($name,
-            function (Options $options, $value) use ($abs, $allowNull) {
+            function (Options $options, $value) use ($abs, $allowNull, $name) {
                 if ($allowNull) {
                     return $value !== null ? $abs ? abs(intval($value)) : intval($value) : null;
                 } else {
@@ -270,11 +309,14 @@ abstract class AbstractRequestParameter
 
     /**
      * @param OptionsResolver $resolver
-     * @param string $name
-     * @param boolean|null $default
+     * @param String $name
+     * @param String $default
      * @param bool $required
      */
-    public static function addBooleanParam(OptionsResolver $resolver, $name, $default, $required = false)
+    public static function addBooleanParam(OptionsResolver $resolver,
+                                           String $name,
+                                           bool $default = null,
+                                           bool $required = false)
     {
         if ($required) {
             $resolver->setRequired($name);
@@ -289,6 +331,135 @@ abstract class AbstractRequestParameter
             }
         );
         $resolver->setDefault($name, $default);
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     * @param String $name
+     * @param String $default
+     * @param bool $required
+     */
+    public static function addStringParam(OptionsResolver $resolver,
+                                          String $name,
+                                          String $default = null,
+                                          bool $required = false)
+    {
+        if ($required) {
+            $resolver->setRequired($name);
+        } else {
+            $resolver->setDefined($name);
+        }
+        $resolver->setAllowedTypes($name, self::getAllowedStringTypes());
+
+        $resolver->setAllowedValues($name,
+            function ($value) use ($required) {
+                if ($required) {
+                    return is_string($value);
+                }
+
+                return is_null($value) || is_string($value);
+            }
+        );
+
+        $resolver->setDefault($name, $default);
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     * @param String $name
+     * @param bool $required
+     */
+    public static function addIdListParameter(OptionsResolver $resolver, String $name, bool $required = false)
+    {
+        if ($required) {
+            $resolver->setRequired($name);
+        } else {
+            $resolver->setDefined($name);
+        }
+
+        $resolver->addAllowedTypes($name, array('string', 'array'));
+        $resolver->setAllowedValues($name,
+            function ($value) {
+                return self::getAllowedIdListValues($value, false);
+            }
+        );
+        $resolver->setNormalizer(
+            $name,
+            function (Options $options, $value) {
+                return self::normalizeIdListValues($value, true);
+            }
+        );
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     * @param String $name
+     * @param bool $required
+     */
+    public static function addStringListParameter(OptionsResolver $resolver, String $name, bool $required = false)
+    {
+        if ($required) {
+            $resolver->setRequired($name);
+        } else {
+            $resolver->setDefined($name);
+        }
+
+        $resolver->addAllowedTypes($name, array('string', 'array'));
+        $resolver->setAllowedValues($name,
+            function ($value) {
+                return is_string($value) || is_array($value);
+            }
+        );
+        $resolver->setNormalizer(
+            $name,
+            function (Options $options, $value) {
+                if (false === is_array($value)) {
+                    return (String) $value;
+                }
+
+                foreach ($value as $key => $val) {
+                    $value[$key] = (String) $val;
+                }
+
+                return $value;
+            }
+        );
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     * @param String $name
+     * @param String $default
+     * @param bool $required
+     * @param String $format
+     */
+    public static function addDateParam(OptionsResolver $resolver,
+                                        String $name,
+                                        String $default = null,
+                                        bool $required = false,
+                                        String $format = \DateTime::ISO8601)
+    {
+        self::addStringParam($resolver, $name, $default, $required);
+
+        $resolver->setAllowedValues($name,
+            function ($value) use ($default, $format) {
+                if (is_null($default)) {
+                    return is_null($value) ? true : self::validateDateTimeString($value, $format);
+                }
+
+                return self::validateDateTimeString($value, $format);
+            }
+        );
+
+        $resolver->setNormalizer($name,
+            function (Options $options, $value) use ($format) {
+                if (is_null($value)) {
+                    return null;
+                }
+
+                return self::normalizeDateTimeString($value, $format);
+            }
+        );
     }
 
     /**
@@ -421,63 +592,51 @@ abstract class AbstractRequestParameter
      * 2015-10-26T07:46:36.611Z
      *
      * @param $str
-     * @param string $format
+     * @param String $format
      * @return \DateTime
      */
-    public static function normalizeDateTimeString($str, $format = null)
+    public static function normalizeDateTimeString($str, $format = \DateTime::ISO8601)
     {
-        return new $format === null ? new \DateTime($str) : \DateTime::createFromFormat($format, $str);
-    }
+        if ($format == \DateTime::ISO8601) {
+            $date = new \DateTime($str);
+        } else {
+            $date = \DateTime::createFromFormat($format, $str);
+        }
+        $date->setTimezone(new \DateTimeZone('Europe/Berlin'));
 
-    /**
-     * validates a string of beeing a unix timestamp
-     *
-     * @param $timestamp
-     * @return bool
-     */
-    public static function isTimestamp($timestamp)
-    {
-        return ctype_digit($timestamp) && strtotime(date('Y-m-d H:i:s', $timestamp)) === (int)$timestamp;
+        return $date;
     }
 
     /**
      * validates a DateTime String for ISO8601 standard
      *
      * @param $str
+     * @param $format
      * @return bool
      */
-    public static function validateDateTimeString($str)
+    public static function validateDateTimeString($str, $format = \DateTime::ISO8601)
     {
-        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$/', $str, $parts) === true) {
-            $time = gmmktime($parts[4], $parts[5], $parts[6], $parts[2], $parts[3], $parts[1]);
+        switch (true) {
+            case $format == \DateTime::ISO8601:
+                if (preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$/', $str, $parts) == true) {
+                    $time = gmmktime($parts[4], $parts[5], $parts[6], $parts[2], $parts[3], $parts[1]);
 
-            $input_time = strtotime($str);
-            if ($input_time === false) {
+                    $input_time = strtotime($str);
+                    if ($input_time === false) {
+                        return false;
+                    }
+
+                    return $input_time == $time;
+                }
+
                 return false;
-            }
+                break;
 
-            return $input_time == $time;
-        } else {
-            return false;
-        }
-    }
+            default:
+                $date = \DateTime::createFromFormat($format, $str);
 
-    /**
-     * @param $str
-     * @throws \InvalidArgumentException
-     * @return string
-     */
-    public static function normalizeJSONDateStringToISO8601($str)
-    {
-        if (self::validateDateTimeString($str)) {
-            return $str;
-        } else {
-            $date = new \DateTime($str, new \DateTimeZone('UTC'));
-            $date->setTimezone(new \DateTimeZone('Europe/Berlin'));
-            if ($date instanceof \DateTime) {
-                return $date->format(\DateTime::ISO8601);
-            }
-            throw new \InvalidArgumentException(sprintf('Unable to normalize DateString'));
+                return $date instanceof \DateTime;
+                break;
         }
     }
 
@@ -498,6 +657,22 @@ abstract class AbstractRequestParameter
         }
 
         return $str;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function _getFormat()
+    {
+        return $this->_format;
+    }
+
+    /**
+     * @param mixed $format
+     */
+    public function _setFormat($format)
+    {
+        $this->_format = $format;
     }
 
 }
