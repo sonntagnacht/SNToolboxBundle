@@ -16,12 +16,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
 use SN\ToolboxBundle\Helper\StringHelper;
-use UO\Bundle\UtilityBundle\Serializer\SerializeHelper;
 
 /**
  * Class AbstractRequestParameter
  *
- * @package UO\Bundle\UtilityBundle\Request
+ * @package SN\ToolboxBundle\Request
  */
 abstract class AbstractRequestParameter
 {
