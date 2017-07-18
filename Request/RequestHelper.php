@@ -10,6 +10,7 @@
 namespace SN\ToolboxBundle\Request;
 
 
+use SN\ToolboxBundle\Exception\BadRequestHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -79,6 +80,42 @@ class RequestHelper
 
         return $helper;
 
+    }
+
+    /**
+     * @param Request $request
+     * @param AbstractRequestParameter $param
+     * @param bool $requestContent
+     * @param bool $requestBody
+     * @param bool $files
+     * @return AbstractRequestParameter
+     */
+    public static function parse(Request $request,
+                                 AbstractRequestParameter $param,
+                                 $requestContent = false,
+                                 $requestBody = false,
+                                 $files = false
+    )
+    {
+        $mergedParams = RequestHelper::mergeAllParams(
+            $request,
+            $requestContent,
+            $requestBody,
+            $files
+        );
+
+        /**
+         * @var $helper RequestHelper
+         */
+        $helper = self::create($param, $mergedParams);
+
+        if (false === $helper->requestIsValid()) {
+            $exception = new BadRequestHttpException();
+            $exception->setRequestHelper($helper);
+            throw $exception;
+        }
+
+        return $helper->getParam();
     }
 
     /**
