@@ -10,6 +10,7 @@
 
 namespace SN\ToolboxBundle\Gaufrette;
 
+use Gaufrette\Exception\FileNotFound;
 use Gaufrette\Filesystem;
 use SN\ToolboxBundle\Gaufrette\Model\GaufretteFileInterface;
 use Symfony\Component\HttpFoundation\File\File;
@@ -35,7 +36,9 @@ class GaufretteHelper
          * @var $key
          */
         foreach ($filesystem->keys() as $key) {
-            $size += $filesystem->size($key);
+            if ($filesystem->has($key)) {
+                $size += $filesystem->size($key);
+            }
         }
 
         return $size;
