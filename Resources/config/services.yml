@@ -3,3 +3,10 @@ services:
         class: SN\ToolboxBundle\Helper\ValidationHelper
         lazy: true
         arguments: ["@service_container"]
+
+    sn.toolbox.exception_listener:
+        class: SN\ToolboxBundle\Event\ExceptionListener
+        lazy: true
+        autowire: false
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: -127 }

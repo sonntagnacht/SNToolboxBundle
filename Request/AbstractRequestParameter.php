@@ -66,7 +66,13 @@ abstract class AbstractRequestParameter
     {
         $resolver = new OptionsResolver();
         $this->setDefaultOptions($resolver);
-        $this->setOptions($resolver->resolve($options));
+        // set initial options first in case something goes wrong and we need the options in the ExceptionListener
+        $this->setOptions($options);
+
+        $resolvedOptions = $resolver->resolve($options);
+
+        // overwrite the options again with the resolved options that are actually parsed and valid
+        $this->setOptions($resolvedOptions);
         $this->mapOptionsWithProperties();
     }
 
@@ -353,7 +359,7 @@ abstract class AbstractRequestParameter
         $resolver->setAllowedValues($name,
             function ($value) use ($required) {
                 if ($required) {
-                    return is_string($value);
+                    return is_string($value) && strlen($value) > 0;
                 }
 
                 return is_null($value) || is_string($value);
