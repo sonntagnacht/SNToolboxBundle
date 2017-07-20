@@ -699,6 +699,11 @@ abstract class AbstractRequestParameter
     public static function normalizeJSONDateStringToISO8601($str)
     {
         if (self::validateDateTimeString($str)) {
+            // avoid javascript suffix 'Z' for JMS Serializer
+            if (substr($str, -1, 1) == 'Z') {
+                return \DateTime::createFromFormat('U', strtotime($str))->format(\DateTime::ISO8601);
+            }
+
             return $str;
         } else {
             $date = new \DateTime($str);
