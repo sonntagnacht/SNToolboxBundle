@@ -195,7 +195,7 @@ abstract class AbstractRequestParameter
      */
     public static function getAllowedBooleanTypes()
     {
-        return array('bool', 'null', 'string');
+        return array('bool', 'null', 'string', 'int');
     }
 
     /**
@@ -679,5 +679,35 @@ abstract class AbstractRequestParameter
     {
         $this->_format = $format;
     }
+
+    /**
+     * validates a string of beeing a unix timestamp
+     *
+     * @param $timestamp
+     * @return bool
+     */
+    public static function isTimestamp($timestamp)
+    {
+        return ctype_digit($timestamp) && strtotime(date('Y-m-d H:i:s', $timestamp)) === (int) $timestamp;
+    }
+
+    /**
+     * @param $str
+     * @throws \InvalidArgumentException
+     * @return string
+     */
+    public static function normalizeJSONDateStringToISO8601($str)
+    {
+        if (self::validateDateTimeString($str)) {
+            return $str;
+        } else {
+            $date = new \DateTime($str);
+            if ($date instanceof \DateTime) {
+                return $date->format(\DateTime::ISO8601);
+            }
+            throw new \InvalidArgumentException(sprintf('Unable to normalize DateString'));
+        }
+    }
+
 
 }
