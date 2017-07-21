@@ -31,7 +31,7 @@ script:
 after_script:
  - php vendor/bin/coveralls -v
 
-notifications:
-    slack:
-        rooms:
-            - sonntagnacht:CZvguyxyM0tlb6Smj7amHjTw#internetz
+#notifications:
+#    slack:
+#        rooms:
+#            - sonntagnacht:CZvguyxyM0tlb6Smj7amHjTw#internetz
