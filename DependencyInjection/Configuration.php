@@ -7,6 +7,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * Class Configuration
+ *
  * @package SN\ToolboxBundle\DependencyInjection
  */
 class Configuration implements ConfigurationInterface
@@ -17,7 +18,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $treeBuilder->root('sn_toolbox');
+        $rootNode    = $treeBuilder->root('sn_toolbox');
 
         return $treeBuilder;
     }
