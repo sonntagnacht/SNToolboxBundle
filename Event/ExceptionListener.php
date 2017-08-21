@@ -34,7 +34,8 @@ class ExceptionListener
             return;
         }
 
-        if ('application/json' !== $event->getRequest()->headers->get('Content-Type')) {
+        $contentType = $event->getRequest()->headers->get('Content-Type');
+        if ('application/json' !== substr($contentType, 0, 16)) {
             return;
         }
 
