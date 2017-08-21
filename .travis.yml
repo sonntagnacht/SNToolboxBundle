@@ -1,4 +1,3 @@
-install: travis_wait 30 mvn install
 language: php
 
 php:
@@ -7,7 +6,7 @@ php:
 
 before_script:
 #  - travis_retry composer self-update
-  - composer install
+#  - composer install
 
 script:
   - mkdir -p build/logs
