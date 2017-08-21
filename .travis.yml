@@ -6,7 +6,7 @@ php:
 
 before_script:
 #  - travis_retry composer self-update
-#  - composer install
+  - composer install
 
 script:
   - mkdir -p build/logs
