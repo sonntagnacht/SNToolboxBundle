@@ -249,7 +249,7 @@ abstract class AbstractRequestParameter
             $uniqueList = array();
             foreach ($value as $key => $id) {
                 if (!in_array($id, $uniqueList)) {
-                    $uniqueList[$key] = $id;
+                    $uniqueList[$key] = intval($id);
                 }
             }
 
