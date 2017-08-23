@@ -35,7 +35,8 @@ class ExceptionListener
         }
 
         $contentType = $event->getRequest()->headers->get('Content-Type');
-        if ('application/json' !== substr($contentType, 0, 16)) {
+        if ('application/json' !== substr($contentType, 0, 16) &&
+            'multipart/form-data' !== substr($contentType, 0, 19)) {
             return;
         }
 
