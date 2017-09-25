@@ -38,6 +38,11 @@ abstract class AbstractRequestParameter
     protected $_format;
 
     /**
+     * @var RequestHelper
+     */
+    protected $requestHelper;
+
+    /**
      * @param array $options
      */
     public function __construct($options = array())
@@ -714,5 +719,20 @@ abstract class AbstractRequestParameter
         }
     }
 
+    /**
+     * @return RequestHelper
+     */
+    public function getRequestHelper(): RequestHelper
+    {
+        return $this->requestHelper;
+    }
+
+    /**
+     * @param RequestHelper $requestHelper
+     */
+    public function setRequestHelper(RequestHelper $requestHelper)
+    {
+        $this->requestHelper = $requestHelper;
+    }
 
 }

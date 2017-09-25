@@ -178,9 +178,10 @@ class RequestHelper
     /**
      * @param AbstractRequestParameter $param
      */
-    public function setParam($param)
+    public function setParam(AbstractRequestParameter $param)
     {
         $this->param = $param;
+        $param->setRequestHelper($this);
     }
 
     /**
