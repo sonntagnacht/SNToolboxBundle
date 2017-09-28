@@ -216,55 +216,78 @@ class CommandHelper
     }
 
     /**
-     * @param String $command
-     * @param OutputInterface $output
-     * @param boolean $write
-     * @return string
-     */
-
-    /**
      * @param $command
-     * @param OutputInterface|null $output
-     * @param bool|string $printOutput
+     * @param array $options
      * @return string
      */
-    public static function executeCommand($command, OutputInterface $output = null, $printOutput = true)
+    public static function execute($command, array $options = array())
     {
+        $options = array_merge([
+            "output"              => null,
+            "command_description" => null,
+            "print_output"        => false,
+            "timeout"             => 3600,
+            "idle_timeout"        => 600
+        ],
+            $options);
+
+        foreach ($options as $k => $v) {
+            switch ($k) {
+                case 'output':
+                    if (false === ($v instanceof OutputInterface || null === $v)) {
+                        throw new \InvalidArgumentException(sprintf("output has to be OutputInterface or null"));
+                    }
+                    break;
+                case 'command_description':
+                    if (false === (true === is_string($v) || null === $v)) {
+                        throw new \InvalidArgumentException(sprintf("command_description has to be String or null"));
+                    }
+                    break;
+                case 'print_output':
+                    if (false === (true === is_bool($v))) {
+                        throw new \InvalidArgumentException(sprintf("print_output has to be Boolean"));
+                    }
+                    break;
+                case 'timeout':
+                    if (false === is_int($v)) {
+                        throw new \InvalidArgumentException(sprintf("timeout has to be Integer"));
+                    }
+                    break;
+                case 'idle_timeout':
+                    if (false === is_int($v)) {
+                        throw new \InvalidArgumentException(sprintf("idle_timeout has to be Integer"));
+                    }
+                    break;
+            }
+        }
 
         $process = new Process($command);
-        $process->setTimeout(3600);
-        $process->setIdleTimeout(600);
+        $process->setTimeout($options['timeout']);
+        $process->setIdleTimeout($options['idle_timeout']);
 
-        if (false === ($output instanceof OutputInterface)) {
+        if (false === ($options["output"] instanceof OutputInterface)) {
             $process->run();
 
             return trim($process->getOutput());
         }
 
-        if (true === is_string($printOutput)) {
-            if (true === $output->isVerbose()) {
-                $cmdLoader = new CommandLoader($output);
-                $cmdLoader->setMessage($printOutput);
+        if (true === is_string($options["command_description"])) {
+            if (false === $options["output"]->isVerbose()) {
+                $options["output"]->writeln($options["command_description"]);
+            } elseif (false === $options["print_output"]) {
+                $cmdLoader = new CommandLoader($options["output"]);
+                $cmdLoader->setMessage($options["command_description"]);
                 $cmdLoader->run();
-                $process->run();
-                $cmdLoader->stop("");
-
-                $output->writeln($printOutput);
-            } else {
-                $output->writeln($printOutput);
-                $process->run();
             }
-
-            return trim($process->getOutput());
+        } else {
+            $options["output"]->writeln(sprintf("<info>%s</info>", $command));
         }
 
-        $output->writeln(sprintf("<info>%s</info>", $command));
-
-        if (true === $printOutput) {
+        if (true === $options["print_output"]) {
             $process->run(
-                function ($type, $buffer) use ($output, $printOutput) {
-                    if (($output instanceof OutputInterface) === true) {
-                        $output->write($buffer);
+                function ($type, $buffer) use ($options) {
+                    if (($options["output"] instanceof OutputInterface) === true) {
+                        $options["output"]->write($buffer);
                     }
                 }
             );
@@ -272,7 +295,31 @@ class CommandHelper
             $process->run();
         }
 
+        if (true === is_string($options["command_description"]) && true === $options["output"]->isVerbose()) {
+            $cmdLoader->stop("");
+            $options["output"]->writeln($options["command_description"]);
+        }
+
         return trim($process->getOutput());
+
+    }
+
+    /**
+     * @param $command
+     * @param OutputInterface|null $output
+     * @param bool|string $printOutput
+     * @return string
+     * @deprecated Please use CommandHelper::execute
+     */
+    public
+    static function executeCommand($command, OutputInterface $output = null, $printOutput = true)
+    {
+        return self::execute($command,
+            array(
+                "output"              => $output,
+                "command_description" => (is_string($printOutput)) ? $printOutput : null,
+                "print_output"        => (is_bool($printOutput)) ? $printOutput : false
+            ));
     }
 
     /**
