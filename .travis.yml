@@ -15,9 +15,11 @@ php:
   
 install:
   - phpenv config-rm xdebug.ini
+  
+before_script:
+  - composer update --prefer-source
 
 script:
-  - composer install
   - mkdir -p build/logs
   - ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
