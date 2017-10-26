@@ -68,6 +68,15 @@ class RequestParameterTest extends BaseTestCase
             'mandatoryIntDefault3' => null,
             'mandatoryNegativeInt' => -33
         ));
+
+        $this->assertEquals(
+            array(
+                'mandatoryInt'         => 33,
+                'mandatoryIntDefault3' => null,
+                'mandatoryNegativeInt' => -33
+            ),
+            $sampleRequest->getOptions()
+        );
     }
 
     public function testBoolParams()
