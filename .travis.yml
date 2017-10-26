@@ -15,7 +15,7 @@ php:
 
 before_script:
 #  - travis_retry composer self-update
-  - travis_wait composer install --prefer-dist --no-interaction --ignore-platform-reqs
+  - composer install --prefer-dist --no-interaction --ignore-platform-reqs
 
 script:
   - mkdir -p build/logs
