@@ -15,7 +15,7 @@ php:
 
 before_script:
 #  - travis_retry composer self-update
-  - composer install --no-interaction
+  - composer install --no-interaction --prefer-source --dev
 
 script:
   - mkdir -p build/logs
