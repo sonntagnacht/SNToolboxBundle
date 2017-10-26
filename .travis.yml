@@ -16,11 +16,8 @@ php:
 install:
   - phpenv config-rm xdebug.ini
 
-before_script:
-  - composer self-update
-  - composer update --no-interaction
-
 script:
+  - composer install
   - mkdir -p build/logs
   - ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
