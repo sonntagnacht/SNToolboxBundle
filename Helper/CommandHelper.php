@@ -311,8 +311,7 @@ class CommandHelper
      * @return string
      * @deprecated Please use CommandHelper::execute
      */
-    public
-    static function executeCommand($command, OutputInterface $output = null, $printOutput = true)
+    public static function executeCommand($command, OutputInterface $output = null, $printOutput = true)
     {
         return self::execute($command,
             array(
@@ -330,8 +329,7 @@ class CommandHelper
      * @param string $titleLocal
      * @throws MissingParameterException
      */
-    public
-    static function compareParametersYml(
+    public static function compareParametersYml(
         OutputInterface $output,
         array $remote,
         array $local,
@@ -447,8 +445,7 @@ class CommandHelper
      * @param Table $table
      * @param string $style - uses sprintf to include table border chars
      */
-    public
-    static function setTableColor(Table $table, $style = '<fg=yellow>%s</>')
+    public static function setTableColor(Table $table, $style = '<fg=yellow>%s</>')
     {
         // by default, this is based on the default style
         $tableStyle = new TableStyle();
@@ -468,8 +465,7 @@ class CommandHelper
      * @param bool $write
      * @throws MissingParameterException
      */
-    public
-    static function executeRemoteCommand($cmd, array $config, OutputInterface $output = null, $write = true)
+    public static function executeRemoteCommand($cmd, array $config, OutputInterface $output = null, $write = true)
     {
         if (empty($config["user"]) === true) {
             throw new MissingParameterException(
