@@ -23,7 +23,7 @@ before_install:
 
 before_script:
 #  - travis_retry composer self-update
-  - composer install --no-interaction --prefer-source --dev
+  - composer update --no-progress --no-suggest --ansi
 
 script:
   - mkdir -p build/logs
