@@ -127,7 +127,7 @@ abstract class AbstractRequestParameter
      * @param bool $uncamelize
      * @return array
      */
-    public function getOptionsArray(bool $uncamelize = true): array
+    public function getOptionsArray($uncamelize = true): array
     {
         $options = $this->getOptions();
         if ($uncamelize) {
@@ -283,11 +283,11 @@ abstract class AbstractRequestParameter
      * @param bool $allowNull (false)
      */
     public static function addIntParam(OptionsResolver $resolver,
-                                       String $name,
-                                       bool $required = false,
-                                       bool $abs = true,
-                                       int $default = null,
-                                       bool $allowNull = false)
+                                        $name,
+                                        $required = false,
+                                        $abs = true,
+                                        $default = null,
+                                        $allowNull = false)
     {
         if ($required) {
             $resolver->setRequired($name);
@@ -332,9 +332,9 @@ abstract class AbstractRequestParameter
      * @param bool $required
      */
     public static function addBooleanParam(OptionsResolver $resolver,
-                                           String $name,
-                                           bool $default = null,
-                                           bool $required = false)
+                                            $name,
+                                            $default = null,
+                                            $required = false)
     {
         if ($required) {
             $resolver->setRequired($name);
@@ -358,9 +358,9 @@ abstract class AbstractRequestParameter
      * @param bool $required
      */
     public static function addStringParam(OptionsResolver $resolver,
-                                          String $name,
-                                          String $default = null,
-                                          bool $required = false)
+                                           $name,
+                                           $default = null,
+                                           $required = false)
     {
         if ($required) {
             $resolver->setRequired($name);
@@ -387,7 +387,7 @@ abstract class AbstractRequestParameter
      * @param String $name
      * @param bool $required
      */
-    public static function addIdListParameter(OptionsResolver $resolver, String $name, bool $required = false)
+    public static function addIdListParameter(OptionsResolver $resolver,  $name,  $required = false)
     {
         if ($required) {
             $resolver->setRequired($name);
@@ -414,7 +414,7 @@ abstract class AbstractRequestParameter
      * @param String $name
      * @param bool $required
      */
-    public static function addStringListParameter(OptionsResolver $resolver, String $name, bool $required = false)
+    public static function addStringListParameter(OptionsResolver $resolver,  $name,  $required = false)
     {
         if ($required) {
             $resolver->setRequired($name);
@@ -452,10 +452,10 @@ abstract class AbstractRequestParameter
      * @param String $format
      */
     public static function addDateParam(OptionsResolver $resolver,
-                                        String $name,
-                                        String $default = null,
-                                        bool $required = false,
-                                        String $format = \DateTime::ISO8601)
+                                         $name,
+                                         $default = null,
+                                         $required = false,
+                                         $format = \DateTime::ISO8601)
     {
         self::addStringParam($resolver, $name, $default, $required);
 
@@ -730,7 +730,7 @@ abstract class AbstractRequestParameter
     /**
      * @return RequestHelper
      */
-    public function getRequestHelper(): RequestHelper
+    public function getRequestHelper()
     {
         return $this->requestHelper;
     }
