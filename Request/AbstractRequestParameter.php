@@ -127,7 +127,7 @@ abstract class AbstractRequestParameter
      * @param bool $uncamelize
      * @return array
      */
-    public function getOptionsArray($uncamelize = true): array
+    public function getOptionsArray($uncamelize = true)
     {
         $options = $this->getOptions();
         if ($uncamelize) {
