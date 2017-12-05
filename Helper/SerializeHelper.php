@@ -131,7 +131,7 @@ class SerializeHelper
      * @param String $dateStr
      * @return string
      */
-    public static function deserializeISO8601Date(String $dateStr) : String
+    public static function deserializeISO8601Date($dateStr)
     {
         try {
             if(AbstractRequestParameter::isTimestamp($dateStr)) {
