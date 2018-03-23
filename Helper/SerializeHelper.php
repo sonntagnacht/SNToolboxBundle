@@ -33,11 +33,12 @@ class SerializeHelper
 
         if ($simple) {
             $data = array(
-                'message' => $e->getMessage(),
-                'file'    => $e->getFile(),
-                'line'    => $e->getLine(),
-                'code'    => $e->getCode(),
-                'trace'   => explode("\n", $e->getTraceAsString())
+                'exception' => get_class($e),
+                'message'   => $e->getMessage(),
+                'file'      => $e->getFile(),
+                'line'      => $e->getLine(),
+                'code'      => $e->getCode(),
+                'trace'     => explode("\n", $e->getTraceAsString())
             );
         } else {
             $data = FlattenException::create($e)->toArray();
@@ -134,14 +135,15 @@ class SerializeHelper
     public static function deserializeISO8601Date($dateStr)
     {
         try {
-            if(AbstractRequestParameter::isTimestamp($dateStr)) {
+            if (AbstractRequestParameter::isTimestamp($dateStr)) {
                 $date = \DateTime::createFromFormat('U', $dateStr);
                 $date->setTimezone(new \DateTimeZone('Europe/Berlin'));
+
                 return $date->format(\DateTime::ISO8601);
-            }else{
+            } else {
                 return AbstractRequestParameter::normalizeJSONDateStringToISO8601($dateStr);
             }
-        }catch(\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             return '';
         }
     }
