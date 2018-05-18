@@ -24,11 +24,11 @@ class SerializeHelper
 {
 
     /**
-     * @param \Exception $e
+     * @param \Exception|\Error $e
      * @param boolean $simple = false
      * @return array
      */
-    public static function serializeException(\Exception $e, $simple = false)
+    public static function serializeException($e, $simple = false)
     {
 
         if ($simple) {
@@ -47,6 +47,9 @@ class SerializeHelper
         $data['traceAsString'] = $e->getTraceAsString();
 
         if ($e->getPrevious() instanceof \Exception) {
+            $data['previous'] = self::serializeException($e->getPrevious());
+        }
+        if ($e->getPrevious() instanceof \Error) {
             $data['previous'] = self::serializeException($e->getPrevious());
         }
 
